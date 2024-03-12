@@ -33,7 +33,7 @@ def main_route(request: Request, search_text: str = '', department: str = '', or
 
 @app.get('/get_organization_tree')
 def get_organization_tree():
-    return json.dumps(phonebook_data.organization_tree)
+    return json.dumps(phonebook_data.organization_tree, ensure_ascii=False)
 
 
 if __name__ == '__main__':
