@@ -13,7 +13,6 @@ from sql_server_connector import DataBaseStorage
 
 app = FastAPI()
 app.mount('/static', StaticFiles(directory='static'), name='static')
-app.mount("/static/js", StaticFiles(directory='js'), name="js")
 templates = Jinja2Templates(directory='templates')
 
 
