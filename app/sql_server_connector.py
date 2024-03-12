@@ -119,8 +119,6 @@ class DataBaseStorage(SearchEngine):
                     }
                 )
             self.organization_tree.append(child_tree)
-        with open('templates/organization_tree.json', 'w', encoding='utf-8') as file:
-            json.dump(self.organization_tree, file, indent=4, ensure_ascii=False)
 
 
 if __name__ == '__main__':

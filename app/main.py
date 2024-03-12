@@ -13,6 +13,7 @@ from sql_server_connector import DataBaseStorage
 
 app = FastAPI()
 app.mount('/static', StaticFiles(directory='static'), name='static')
+app.mount("/static/js", StaticFiles(directory='js'), name="js")
 templates = Jinja2Templates(directory='templates')
 
 
@@ -29,6 +30,11 @@ def main_route(request: Request, search_text: str = '', department: str = '', or
         'department': department,
         'organization': organization,
     })
+
+
+@app.get('/get_organization_tree')
+def get_organization_tree():
+    return json.dumps(phonebook_data.organization_tree)
 
 
 if __name__ == '__main__':
