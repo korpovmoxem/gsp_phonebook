@@ -1,16 +1,3 @@
-SEARCH_KEYS = (
-    'FullNameRus',
-    'PositionTitle',
-    'OrganizationName',
-    'DepartmentName',
-    'Email',
-    'TelephoneNumberCorp',
-    'MobileNumberCorp',
-    'WorkPlace',
-    'Address',
-)
-
-
 class SearchEngine:
     """
     Методы поиска по массиву из БД
@@ -50,12 +37,13 @@ class SearchEngine:
         :param page: Номер страницы справочника
         :return: Отфильтрованный массив по указанным параметрам
         """
-        if department and organization:
-            self.filtered_data = list(filter(lambda item: item['OrganizationID'] == organization and item['DepartmentID'] == department, self.employees))
-        elif organization:
-            self.filtered_data = list(filter(lambda item: item['OrganizationID'] == organization, self.employees))
-        else:
-            self.filtered_data = self.employees
+        self.filtered_data = self.employees
+
+        if organization:
+            self.filtered_data = list(filter(lambda item: item['OrganizationID'] == organization, self.filtered_data))
+
+        if department and department != organization:
+            self.filtered_data = list(filter(lambda item: item['DepartmentID'] == department, self.filtered_data))
 
         if search_text:
             temp_data = list()
