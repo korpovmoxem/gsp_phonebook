@@ -1,10 +1,7 @@
-import os
-from datetime import datetime, timedelta
 import json
 
 import uvicorn
-from fastapi import FastAPI, Request, Form, File, UploadFile
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -24,10 +21,10 @@ def main_route(request: Request, search_text: str = '', department: str = '', or
     return templates.TemplateResponse('mainpage.html', {
         'request': request,
         'items': phonebook_data.search(search_text, department, organization, page=page),
-        'organization_tree': phonebook_data.organization_tree,
         'page': page,
         'department': department,
         'organization': organization,
+        'page_list': phonebook_data.get_pages_count()
     })
 
 
@@ -38,5 +35,3 @@ def get_organization_tree():
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8000)
-
-

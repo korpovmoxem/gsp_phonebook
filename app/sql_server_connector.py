@@ -1,5 +1,3 @@
-import json
-
 import pyodbc
 import yaml
 from yaml.loader import SafeLoader
@@ -25,22 +23,22 @@ class SqlServerConnector:
             f'Database={sql_server_config["Database"]};'
         )
         self.db_name = f'{sql_server_config["Database"]}.dbo'
-        self.cursor = sql_connector.cursor()
+        self.__cursor = sql_connector.cursor()
 
-    def execute_query(self, query: str) -> list:
+    def __execute_query(self, query: str) -> list:
         """
         Выполняет запрос и возвращает массив типа list
         :param query: строка с SQL запросом
         :return: Данные, полученные запросом в БД
         """
-        return self.cursor.execute(query).fetchall()
+        return self.__cursor.execute(query).fetchall()
 
-    def get_column_names(self):
+    def __get_column_names(self):
         """
         Получает наименования колонок в таблице БД, к которой последний раз отправлялся запрос
         :return:
         """
-        return [i[0] for i in self.cursor.description]
+        return [i[0] for i in self.__cursor.description]
 
     def get_formatted_data(self, query: str) -> list:
         """
@@ -48,10 +46,10 @@ class SqlServerConnector:
         :param query: строка с SQL запросом
         :return: Список, в котором каждый элемент - строка таблицы в формате dict
         """
-        raw_data = self.execute_query(query)
+        raw_data = self.__execute_query(query)
         for i in range(len(raw_data)):
             raw_data[i] = list(map(lambda x: '' if not x else x, raw_data[i]))
-        data_fields = self.get_column_names()
+        data_fields = self.__get_column_names()
         return list(map(lambda x: dict(zip(data_fields, x)), raw_data))
 
 
@@ -60,7 +58,31 @@ class DataBaseStorage(SearchEngine):
     Хранилище всех данных из БД
     """
 
-    def fill_department_children(self, department: dict, departments_list: list) -> list:
+    def __fill_organizational_structure(self, employee: dict, employee_list: list, department_list: list) -> list:
+        """
+        Рекурсивное формирование последовательной оргструктуры департаментов в виде list
+        :param employee: Данные сотрудника, для которого формируется оргструктура
+        :param employee_list: Массив со всеми сотрудниками
+        :param department_list: Массив со всеми департаментами
+        """
+        org_structure = list()
+        department = list(filter(lambda dep: dep['ID'] == employee['DepartmentID'] and
+                                 dep['OrganizationID'] == employee['OrganizationID'], department_list))[0]
+
+        if department['ParentID'] != '00000000-0000-0000-0000-000000000000':
+            ruk_info = list(filter(lambda ruk: ruk['ID'] == department['Ruk_ID'], employee_list))[0]
+            org_structure.append(
+                {
+                    'DepartmentName': department['Name'],
+                    'Name': ruk_info['FullNameRus'],
+                    'PositionTitle': ruk_info['PositionTitle'],
+                }
+            )
+            org_structure.append(self.__fill_organizational_structure(ruk_info, employee_list, department_list))
+
+        return org_structure
+
+    def __fill_department_children(self, department: dict, departments_list: list) -> list:
         """
         Рекурсивное формирование структуры департаментов в виде dict
         :param department: Данные департамента, для которого формируется дерево дочерних департаментов
@@ -76,7 +98,7 @@ class DataBaseStorage(SearchEngine):
                         'Name': child['Name'],
                         'Filial': child['Filial'],
                         'Inn': child['OrganizationID'],
-                        'Children': self.fill_department_children(child, departments_list),
+                        'Children': self.__fill_department_children(child, departments_list),
                     }
                 )
         return current_tree
@@ -90,13 +112,16 @@ class DataBaseStorage(SearchEngine):
 
         # Дополнение массива названием департамента и компании
         for row in self.employees:
-            row['OrganizationName'] = list(filter(lambda organization: organization['ID'] == row['OrganizationID'], self.organizations))[0]['Name']
-            department_name = list(filter(lambda department: department['ID'] == row['DepartmentID'] and department['OrganizationID'] == row['OrganizationID'], self.departments))
+            row['OrganizationName'] = list(filter(lambda org: org['ID'] == row['OrganizationID'], self.organizations))[0]['Name']
+            department_name = list(filter(lambda dep: dep['ID'] == row['DepartmentID'] and dep['OrganizationID'] == row['OrganizationID'], self.departments))
             if department_name:
                 row['DepartmentName'] = department_name[0]['Name']
             else:
                 row['DepartmentName'] = ''
                 print(row)
+
+            # Формирование оргструктуры сотрудника
+            # row['OrgStructure'] = self.__fill_organizational_structure(row, self.employees, self.departments)
 
         # Формирование древовидной структуры департаментов
         self.organization_tree = list()
@@ -115,7 +140,7 @@ class DataBaseStorage(SearchEngine):
                         'Name': department['Name'],
                         'Filial': department['Filial'],
                         'Inn': department['OrganizationID'],
-                        'Children': self.fill_department_children(department, self.departments),
+                        'Children': self.__fill_department_children(department, self.departments),
                     }
                 )
             self.organization_tree.append(child_tree)
