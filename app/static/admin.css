@@ -1,0 +1,46 @@
+body {
+    background-color: #252526
+}
+
+#input_form {
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 150px;
+}
+
+#submit_button {
+    display: flex!important;
+    margin-top: 15px;
+    
+}
+
+.button_block {
+    display: flex;
+    justify-content: center;
+}
+
+.page_title {
+    margin-top: 50px;
+    font-size: 25px;
+    color: white;
+}
+
+.form-control {
+    background-color: #252526!important;
+    color: white!important;
+}
+
+::placeholder {
+    color: white!important;
+    opacity: 0.5!important;
+}
+
+.exit_block {
+    display: flex;
+    flex-direction: row-reverse;
+    margin: 20px;
+}
