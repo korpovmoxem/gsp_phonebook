@@ -59,7 +59,17 @@ function createMenuItem(hasChildren, value) {
       <ul class="menu__item">`;
 
     value.Children.forEach((child) => {
-      html += `<li><a href='/?&search_text={{ search_text }}&organization=${child.Inn}&department=${child.ID}'>${child.Name}</a></li>`;
+      if (Array.isArray(child.Children) && child.Children.length === 0) {
+        html += `<li><a href='/?&search_text={{ search_text }}&organization=${child.Inn}&department=${child.ID}'>${child.Name}</a></li>`;
+      }
+      if (Array.isArray(child.Children) && child.Children.length > 0) {
+        html += `<li><span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${
+          child.Inn
+        }&department=${child.ID}'>${child.Name}</a></span>
+        <ul class="menu__item">
+        <li><a href='/?&search_text={{ search_text }}&organization=${1}&department=${1}'>${1}</a></li>
+        </ul>`;
+      }
     });
 
     html += `</ul></li>`;
