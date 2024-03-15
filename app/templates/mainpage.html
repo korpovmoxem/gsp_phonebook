@@ -18,7 +18,6 @@
     const response = await fetch('get_organization_tree');
     const data = await response.json();
     const newData = JSON.parse(data)
-    console.log(newData)
     renderOrganization(newData);
   } catch (err) {
     console.log(err);
@@ -30,24 +29,44 @@ function renderOrganization(jsonData) {
   const menuContainer = document.querySelector(".menu__list");
   const gsp5 = jsonData.find((value) => value.Name === 'ООО "ГСП-5"');
   const nameChildren = gsp5.Children.map((value) => value);
-  console.log(nameChildren);
-  let html = `
-    <li class="myMainClass">
-        <span class="menu__items">${gsp5.Name}</span>
-        <ul class="menu__item">
-            <li>
-              <span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${gsp5.Children[0].Inn}&department=${gsp5.Children[0].ID}'>${gsp5.Children[0].Name}</a></span>
-              <ul class="menu__item">`;
-  nameChildren.forEach((value) => {
-    html += `
-                <li><a href='/?&search_text={{ search_text }}&organization=${value.Inn}&department=${value.ID}'>${value.Name}</a></li>`;
-  });
-  html += `
-              </ul>
-            </li>
-        </ul>
-    </li>`;
+  let html = createMenuItems(gsp5.Name, nameChildren);
   menuContainer.insertAdjacentHTML("beforeend", html);
+}
+
+function createMenuItems(name, children) {
+  let html = `<li class="myMainClass">
+    <span class="menu__items">${name}</span>
+    <ul class="menu__item">`;
+  children.forEach((value) => {
+    const hasChildren =
+      Array.isArray(value.Children) && value.Children.length > 0;
+    html += createMenuItem(hasChildren, value);
+  });
+
+  html += `
+    </ul>
+  </li>`;
+
+  return html;
+}
+
+function createMenuItem(hasChildren, value) {
+  let html = "";
+
+  if (hasChildren) {
+    html += `<li>
+      <span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${value.Inn}&department=${value.ID}'>${value.Name}</a></span>
+      <ul class="menu__item">`;
+
+    value.Children.forEach((child) => {
+      html += `<li><a href='/?&search_text={{ search_text }}&organization=${child.Inn}&department=${child.ID}'>${child.Name}</a></li>`;
+    });
+
+    html += `</ul></li>`;
+  } else {
+    html += `<li><a href='/?&search_text={{ search_text }}&organization=${value.Inn}&department=${value.ID}'>${value.Name}</a></li>`;
+  }
+  return html;
 }
     </script>
     <!-- Предупреждение в шапке сайта -->
