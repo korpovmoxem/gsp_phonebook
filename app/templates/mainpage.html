@@ -27,24 +27,23 @@ getOrganization();
 
 function renderOrganization(jsonData) {
   const menuContainer = document.querySelector(".menu__list");
-  const gsp5 = jsonData.find((value) => value.Name === 'ООО "ГСП-5"');
-  const nameChildren = gsp5.Children.map((value) => value);
-  let html = createMenuItems(gsp5.Name, nameChildren);
-  menuContainer.insertAdjacentHTML("beforeend", html);
+  jsonData.forEach((item) => {
+    const menuItems = createMenuItems(item.Name, item.Children);
+    menuContainer.insertAdjacentHTML("beforeend", menuItems);
+  });
 }
 
 function createMenuItems(name, children) {
   let html = `<li class="myMainClass">
-    <span class="menu__items">${name}</span>
-    <ul class="menu__item">`;
+      <span class="menu__items">${name}</span>
+      <ul class="menu__item">`;
   children.forEach((value) => {
     const hasChildren =
       Array.isArray(value.Children) && value.Children.length > 0;
     html += createMenuItem(hasChildren, value);
   });
 
-  html += `
-    </ul>
+  html += `</ul>
   </li>`;
 
   return html;
@@ -55,8 +54,8 @@ function createMenuItem(hasChildren, value) {
 
   if (hasChildren) {
     html += `<li>
-      <span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${value.Inn}&department=${value.ID}'>${value.Name}</a></span>
-      <ul class="menu__item">`;
+          <span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${value.Inn}&department=${value.ID}'>${value.Name}</a></span>
+          <ul class="menu__item">`;
 
     value.Children.forEach((child) => {
       if (Array.isArray(child.Children) && child.Children.length === 0) {
@@ -66,9 +65,9 @@ function createMenuItem(hasChildren, value) {
         html += `<li><span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${
           child.Inn
         }&department=${child.ID}'>${child.Name}</a></span>
-        <ul class="menu__item">
-        <li><a href='/?&search_text={{ search_text }}&organization=${1}&department=${1}'>${1}</a></li>
-        </ul>`;
+              <ul class="menu__item">
+              ${createChildItems(child.Children)}
+              </ul></li>`;
       }
     });
 
@@ -76,6 +75,24 @@ function createMenuItem(hasChildren, value) {
   } else {
     html += `<li><a href='/?&search_text={{ search_text }}&organization=${value.Inn}&department=${value.ID}'>${value.Name}</a></li>`;
   }
+  return html;
+}
+
+function createChildItems(children) {
+  let html = "";
+  children.forEach((child) => {
+    if (Array.isArray(child.Children) && child.Children.length === 0) {
+      html += `<li><a href='/?&search_text={{ search_text }}&organization=${child.Inn}&department=${child.ID}'>${child.Name}</a></li>`;
+    }
+    if (Array.isArray(child.Children) && child.Children.length > 0) {
+      html += `<li><span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${
+        child.Inn
+      }&department=${child.ID}'>${child.Name}</a></span>
+      <ul class="menu__item">
+      ${createChildItems(child.Children)}
+      </ul></li>`;
+    }
+  });
   return html;
 }
     </script>
