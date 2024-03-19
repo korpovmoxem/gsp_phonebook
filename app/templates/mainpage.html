@@ -408,26 +408,40 @@ function createMenuItem(hasChildren, value) {
 
   if (hasChildren) {
     html += `<li>
-          <span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${value.Inn}&department=${value.ID}'>${value.Name}</a></span>
-          <ul class="menu__item">`;
+        <span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${
+          value.Inn
+        }&department=${value.ID}' style="${
+      value.Filial === 1 ? "color: red;" : ""
+    }">${value.Name}</a></span>
+        <ul class="menu__item">`;
 
     value.Children.forEach((child) => {
       if (Array.isArray(child.Children) && child.Children.length === 0) {
-        html += `<li><a href='/?&search_text={{ search_text }}&organization=${child.Inn}&department=${child.ID}'>${child.Name}</a></li>`;
+        html += `<li><a href='/?&search_text={{ search_text }}&organization=${
+          child.Inn
+        }&department=${child.ID}' style="${
+          child.Filial === 1 ? "color: red;" : ""
+        }">${child.Name}</a></li>`;
       }
       if (Array.isArray(child.Children) && child.Children.length > 0) {
         html += `<li><span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${
           child.Inn
-        }&department=${child.ID}'>${child.Name}</a></span>
-              <ul class="menu__item">
-              ${createChildItems(child.Children)}
-              </ul></li>`;
+        }&department=${child.ID}' style="${
+          child.Filial === 1 ? "color: red;" : ""
+        }">${child.Name}</a></span>
+            <ul class="menu__item">
+            ${createChildItems(child.Children)}
+            </ul></li>`;
       }
     });
 
     html += `</ul></li>`;
   } else {
-    html += `<li><a href='/?&search_text={{ search_text }}&organization=${value.Inn}&department=${value.ID}'>${value.Name}</a></li>`;
+    html += `<li><a href='/?&search_text={{ search_text }}&organization=${
+      value.Inn
+    }&department=${value.ID}' style="${
+      value.Filial === 1 ? "color: red;" : ""
+    }">${value.Name}</a></li>`;
   }
   return html;
 }
@@ -522,7 +536,6 @@ document.getElementById("toggleButton").addEventListener("click", function () {
 
   saveMenuState(); // Сохранить состояние после сворачивания всех элементов
 });
-
 
               </script>
 
