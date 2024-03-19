@@ -70,10 +70,7 @@ class DataBaseStorage(SearchEngine):
                                  dep['OrganizationID'] == employee['OrganizationID'], department_list))[0]
 
         if department['ParentID'] != '00000000-0000-0000-0000-000000000000':
-            ruk_info = list(filter(lambda ruk: ruk['ID'] == department['Ruk_ID'], employee_list))
-            if ruk_info:
-                ruk_info = ruk_info[0]
-            
+            ruk_info = list(filter(lambda ruk: ruk['ID'] == department['Ruk_ID'], employee_list))[0]
             org_structure.append(
                 {
                     'DepartmentName': department['Name'],
@@ -124,7 +121,7 @@ class DataBaseStorage(SearchEngine):
                 print(row)
 
             # Формирование оргструктуры сотрудника
-            # row['OrgStructure'] = self.__fill_organizational_structure(row, self.employees, self.departments)
+            #row['OrgStructure'] = self.__fill_organizational_structure(row, self.employees, self.departments)
 
         # Формирование древовидной структуры департаментов
         self.organization_tree = list()
