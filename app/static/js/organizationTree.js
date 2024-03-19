@@ -81,7 +81,7 @@ function createMenuItem(hasChildren, value) {
         <span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${
           value.Inn
         }&department=${value.ID}' style="${
-      value.Filial === 1 ? "color: red;" : ""
+      value.Filial === 1 ? "color: #02263a;" : ""
     }">${value.Name}</a></span>
         <ul class="menu__item">`;
 
@@ -90,14 +90,14 @@ function createMenuItem(hasChildren, value) {
         html += `<li><a href='/?&search_text={{ search_text }}&organization=${
           child.Inn
         }&department=${child.ID}' style="${
-          child.Filial === 1 ? "color: red;" : ""
+          child.Filial === 1 ? "color: #02263a;" : ""
         }">${child.Name}</a></li>`;
       }
       if (Array.isArray(child.Children) && child.Children.length > 0) {
         html += `<li><span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${
           child.Inn
         }&department=${child.ID}' style="${
-          child.Filial === 1 ? "color: red;" : ""
+          child.Filial === 1 ? "color: #02263a;" : ""
         }">${child.Name}</a></span>
             <ul class="menu__item">
             ${createChildItems(child.Children)}
@@ -110,7 +110,7 @@ function createMenuItem(hasChildren, value) {
     html += `<li><a href='/?&search_text={{ search_text }}&organization=${
       value.Inn
     }&department=${value.ID}' style="${
-      value.Filial === 1 ? "color: red;" : ""
+      value.Filial === 1 ? "color: #02263a;" : ""
     }">${value.Name}</a></li>`;
   }
   return html;
@@ -207,7 +207,7 @@ document.getElementById("toggleButton").addEventListener("click", function () {
   saveMenuState(); // Сохранить состояние после сворачивания всех элементов
 });
 
-// Появление теста с организацией и департаментом
+// -------------Появление теста с организацией и департаментом------------------------------
 
 // Убираем надпись через крестик при нажатии
 document.querySelector(".newText").addEventListener("click", () => {
