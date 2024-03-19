@@ -28,7 +28,8 @@ def main_route(request: Request, search_text: str = '', department: str = '', or
         'page': page,
         'department': department,
         'organization': organization,
-        'pages_count': phonebook_data.get_pages_count()
+        'pages_count': phonebook_data.get_pages_count(),
+        'search_text': search_text,
     })
 
 
