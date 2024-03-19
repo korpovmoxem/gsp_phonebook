@@ -74,6 +74,8 @@ class DataBaseStorage(SearchEngine):
             org_structure.append(
                 {
                     'DepartmentName': department['Name'],
+                    'DepartmentID': department['ID'],
+                    'OrganizationID': department['OrganizationID'],
                     'Name': ruk_info['FullNameRus'],
                     'PositionTitle': ruk_info['PositionTitle'],
                 }
