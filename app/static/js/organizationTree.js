@@ -81,23 +81,23 @@ function createMenuItem(hasChildren, value) {
         <span class="menu__items"><a href='/?organization=${
           value.Inn
         }&department=${value.ID}' style="${
-      value.Filial === 1 ? "color: #02263a;" : ""
+      value.Filial === 1 ? "color: #007FFF;" : ""
     }">${value.Name}</a></span>
         <ul class="menu__item">`;
 
     value.Children.forEach((child) => {
       if (Array.isArray(child.Children) && child.Children.length === 0) {
-        html += `<li><a href='/?organization=${
-          child.Inn
-        }&department=${child.ID}' style="${
-          child.Filial === 1 ? "color: #02263a;" : ""
-        }">${child.Name}</a></li>`;
+        html += `<li><a href='/?organization=${child.Inn}&department=${
+          child.ID
+        }' style="${child.Filial === 1 ? "color: #007FFF;" : ""}">${
+          child.Name
+        }</a></li>`;
       }
       if (Array.isArray(child.Children) && child.Children.length > 0) {
         html += `<li><span class="menu__items"><a href='/?organization=${
           child.Inn
         }&department=${child.ID}' style="${
-          child.Filial === 1 ? "color: #02263a;" : ""
+          child.Filial === 1 ? "color: #007FFF;" : ""
         }">${child.Name}</a></span>
             <ul class="menu__item">
             ${createChildItems(child.Children)}
@@ -107,11 +107,11 @@ function createMenuItem(hasChildren, value) {
 
     html += `</ul></li>`;
   } else {
-    html += `<li><a href='/?organization=${
-      value.Inn
-    }&department=${value.ID}' style="${
-      value.Filial === 1 ? "color: #02263a;" : ""
-    }">${value.Name}</a></li>`;
+    html += `<li><a href='/?organization=${value.Inn}&department=${
+      value.ID
+    }' style="${value.Filial === 1 ? "color: #007FFF;" : ""}">${
+      value.Name
+    }</a></li>`;
   }
   return html;
 }
