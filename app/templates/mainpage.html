@@ -9,21 +9,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link id="favicon" rel="icon" type="image/x-icon" href="{{ url_for('static', path='/content/favicon.ico') }}">
     <link href="{{ url_for('static', path='/style.css') }}" rel=stylesheet>
-    <script src="{{ url_for('static', path='/style/js/main.js') }}"></script>
-    <script src="{{ url_for('static', path='/style/js/banner.js') }}"></script>
+    <script defer src="{{ url_for('static', path='/js/organizationTree.js') }}"></script>
+    <script defer src="{{ url_for('static', path='/js/banner.js') }}"></script>
+    <script defer src="{{ url_for('static', path='/js/darkMode.js') }}"></script>
+    <script defer src="{{ url_for('static', path='/js/inputCursorEmail.js') }}"></script>
+    <script defer src="{{ url_for('static', path='/js/scroll.js') }}"></script>
     <script defer src="/get_organization_tree"></script>
   </head>
   <body>
-
-    <!-- Предупреждение в шапке сайта -->
-      <div class="content-alert">
-        <div class="container">
-          <div class="content">
-            Уважаемые коллеги! Данный справочник работает в тестовом режиме. Если у вас есть предложения, вы нашли ошибку или хотели бы заменить фото, то направляйте письма на адрес <a class="content__link" href="mailto:phonebook@gsprom.ru">phonebook@gsprom.ru</a>
-          </div>
-        </div>
-      </div>
-
     <!-- Эффект при наведении на ссылки -->
       <div class="follow-cursor"></div>
       
@@ -73,80 +66,11 @@
       </div>
       </nav>
 
-    <!-- Скрипт для темной и светлой темы -->
-      <script>
-      const btnDarkMode = document.querySelector(".dark-mode-btn");
-        // 1. Проверка темной темы на уровне системных настроек
-        if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ) {
-          btnDarkMode.classList.add("dark-mode-btn--active");
-          document.body.classList.add("dark");
-        }
-        
-        // 2. Проверка темной темы в localStorage
-        if (localStorage.getItem('darkMode') === 'dark') {
-          btnDarkMode.classList.add("dark-mode-btn--active");
-          document.body.classList.add("dark");
-        } else if (localStorage.getItem("darkMode") === "light") {
-          btnDarkMode.classList.remove("dark-mode-btn--active");
-          document.body.classList.remove("dark");
-        }
-        
-        // Если меняются системные настройки, меняем тему
-        window
-            .matchMedia("(prefers-color-scheme: dark)")
-            .addEventListener("change", (event) => {
-              const newColorScheme = event.matches ? "dark" : "light";
-        
-              if (newColorScheme === "dark") {
-                btnDarkMode.classList.add("dark-mode-btn--active");
-                document.body.classList.add("dark");
-                localStorage.setItem("darkMode", "dark");
-              } else {
-                btnDarkMode.classList.remove("dark-mode-btn--active");
-                document.body.classList.remove("dark");
-                localStorage.setItem("darkMode", "light");
-              }
-            });
-        
-        // Включение ночного режима по кнопке
-        btnDarkMode.onclick = function () {
-          btnDarkMode.classList.toggle("dark-mode-btn--active");
-          const isDark = document.body.classList.toggle("dark");
-        
-          if (isDark) {
-            localStorage.setItem("darkMode", "dark");
-          } else {
-            localStorage.setItem("darkMode", "light");
-          }
-        };
-      </script>
-
     <!-- Контейнер в котором находится структура сайта таблица и раскрывающийся список -->
       <div class="container">
     <div class='bodybody'>
     <!-- Кнопка для плавного скрола -->
-    <button onclick="topFunction()" id="button_scroll_up" title="Go to top">▲</button>
-
-    <!-- Скрипт для плавгного скорола вверх сайта при нажатии на кнопку -->
-    <script>
-        // When the user scrolls down 20px from the top of the document, show the button
-        window.onscroll = function() {scrollFunction()};
-
-        function scrollFunction() {
-          if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            document.getElementById("button_scroll_up").style.display = "block";
-          } else {
-            document.getElementById("button_scroll_up").style.display = "none";
-          }
-        }
-
-        // When the user clicks on the button, scroll to the top of the document
-          function topFunction() {
-          document.body.scrollTop = 0; // For Safari
-          document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-        }
-    </script>
-    
+    <button onclick="topFunction()" id="button_scroll_up" title="Go to top">▲</button>   
     <!-- Поисковая строка сотрудников и кнопка "Искать" -->
     <form  method="get" class='search_args'>
         <!-- <select disabled class="form-select" id="search_filter" aria-label="Фильтр" style="width: 250px; border-color: #252526; border-width: 1px; border-radius: 5px 0 0 5px; visibility: hidden">
@@ -183,13 +107,10 @@
 
     </form>
 
-
     <!-- Раскрывающийся список филиалов и Таблица с пользователями телефонного справочник  и бутсраповский класс с колонками-->
       <div class="row row-cols-2">
-
         <!-- Раскрывающийся список филиалов и бутсраповский класс с колонками-->
         <div class="col-sm-4">
-
             <!-- Раскрывающийся список филиалов -->
           <form method="post" class='department_structure'>
           <div class="content-menu">
@@ -200,95 +121,7 @@
           </div>
         </div>
           </form>
-
-          <!-- Скрипт для раскрывающегося списка филиалов и кнопки "Свернуть" + Появление теста с организацией и департаментом -->
-          <!-- Появление теста с организацией и департаментом  -->
-          <script>
-            // Убираем надпись через крестик при нажатии
-           document.querySelector('.newText').addEventListener('click', () => {
-            document.querySelector('.newText').style.display = 'none';
-            localStorage.removeItem('myText');
-           })
-
-            // Убираем надпись при нажатии кнопки "Искать"
-            // document.querySelector('.btn ').addEventListener('click', () => {
-            //   localStorage.removeItem('myText');
-            // })
-
-            // Добавляем надпись при нажатии на ссылку без плюса
-            document.querySelectorAll('.menu__item > li > a').forEach((item) => {
-                item.addEventListener('click', function (e) {
-                    let stroke = [];
-                    let current = item.parentNode
-                    while (current.className != 'myMainClass') {
-                        if (current.nodeName == 'UL') {
-                            stroke.push(current.previousElementSibling.textContent);
-                        }
-                        current = current.parentNode;
-
-                        //Сохранение данных после перезагрузки страницы
-                        localStorage.setItem('myText', 'Поиск по: ' + stroke.reverse().join(' -> ') + ' -> ' + item.textContent);
-                        localStorage.getItem('myText');
-                    }
-                    document.querySelector('.newText').innerText = 'Поиск по: ' + stroke.join(' -> ') + ' -> ' + item.textContent ;
-                    document.querySelector('.newText').style.display = 'flex';
-
-                })
-            })
-
-            // Добавляем надпись при нажатии на ссылку с плюсом
-            document.querySelectorAll('.menu__item > li > span > a').forEach((item) => {
-                item.addEventListener('click', function (e) {
-                    let stroke = [];
-                    let current = item.parentNode
-                    while (current.className != 'myMainClass') {
-                        if (current.nodeName == 'UL') {
-                            stroke.push(current.previousElementSibling.textContent);
-                        }
-                        current = current.parentNode;
-
-                        //Сохранение данных после перезагрузки страницы
-                        localStorage.setItem('myText', 'Поиск по: ' + stroke.reverse().join(' -> ') + ' -> ' + item.textContent);
-                        localStorage.getItem('myText');
-                    }
-                    document.querySelector('.newText').innerText = 'Поиск по: ' + stroke.join(' -> ') + ' -> ' + item.textContent ;
-                    document.querySelector('.newText').style.display = 'flex';
-
-                })
-            })
-
-            // Добавляем надпись при нажатии на ссылку с плюсом в другой структуре
-            document.querySelectorAll('.menu__item > span > a').forEach((item) => {
-                item.addEventListener('click', function (e) {
-                    let stroke = [];
-                    let current = item.parentNode
-                    while (current.className != 'myMainClass') {
-                        if (current.nodeName == 'UL') {
-                            stroke.push(current.previousElementSibling.textContent);
-                        }
-                        current = current.parentNode;
-
-                        //Сохранение данных после перезагрузки страницы
-                        localStorage.setItem('myText', 'Поиск по: ' + stroke.reverse().join(' -> ') + ' -> ' + item.textContent);
-                        localStorage.getItem('myText');
-                    }
-                    document.querySelector('.newText').innerText = 'Поиск по: ' + stroke.join(' -> ') + ' -> ' + item.textContent ;
-                    document.querySelector('.newText').style.display = 'flex';
-
-                })
-            })
-
-          // Вывод данных после перезагрузки страницы
-          if(localStorage.getItem('myText') !== null)
-          {
-              document.querySelector('.newText').innerText = localStorage.getItem('myText');
-              document.querySelector('.newText').style.display = 'flex';
-          }
-
-          </script>      
-
         </div>
-
         <!-- Таблица с пользователями телефонного справочника и бутсраповский класс с колонками-->
         <div class="row col-sm-9">
           <div class='items_table'>
@@ -510,42 +343,12 @@
             </div>
             {% endfor %}
           </div>
-          <!-- Скрипт модального окна, появление надписи при нажатии на отдел внутри модального окна -->
-          <script>
-            document.querySelectorAll('.department').forEach((item) => {
-              stroke = [];
-              item.addEventListener('click', (e) => {
-                document.querySelectorAll('.menu__item > li > a').forEach((subitem) =>{
-                  if(subitem.textContent === item.textContent)
-                  {
-                    subitem.click();
-                  }
-                })
-                document.querySelectorAll('.menu__item > li > span > a').forEach((subitem)=>{
-                  if(subitem.textContent === item.textContent)
-                  {
-                    subitem.click();
-                  }
-                })
-                document.querySelectorAll('.menu__item > span > a').forEach((subitem)=>{
-                  if(subitem.textContent === item.textContent)
-                  {
-                    subitem.click();
-                  }
-                })
-              })
-              
-            })
-          </script>
             </table>
           </div>
         </div>
       </div>
-
     </div>
-
       </div>
-
   <!-- Подвал сайта -->
   <div class="border-footer"></div>
       <div class="container">
@@ -572,82 +375,7 @@
             </div>
           </div>
       </div>
-  <!-- Скрипт для Сидельникова -->
-      <script>
-      document.querySelector('.header-title-h1').addEventListener('click', function(){
-        document.querySelector('.btn__toggle').classList.remove('hidden')
-      })
-
-    document.querySelector('.on').addEventListener('click', function(){
-        localStorage.setItem('myTexttt', document.querySelector('body').classList.add('sid'));
-        localStorage.getItem('myTexttt');
-        document.querySelector('body').classList.add('sid')
-    })
-
-    document.querySelector('.of').addEventListener('click', function() {
-      document.querySelector('body').classList.remove('sid')
-      localStorage.removeItem('myTexttt');
-    })
-
-    if(localStorage.getItem('myTexttt') !== null)
-  {
-    document.querySelector('body').classList.add('sid')
-  }
-      </script>
-
     <!-- Скрипт Бутстрапа -->
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-
-    <!-- Скрипт подсказка при наведении на инпут-->
-      <script>
-      // после загрузки страницы
-      $(function(){
-      // инициализации подсказок для всех элементов на странице, имеющих атрибут data-toggle="tooltip"
-      $('[data-toggle="tooltip"]').tooltip();
-      });
-      </script>
-    
-    <!-- Скрипт для Курсора(появляется при наведении на ссылку) -->
-      <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const followCursor = () => { // объявляем функцию followCursor
-          const el = document.querySelector('.follow-cursor') // ищем элемент, который будет следовать за курсором
-      
-          window.addEventListener('mousemove', e => { // при движении курсора
-            const target = e.target // определяем, где находится курсор
-            if (!target) return
-      
-            if (target.closest('.page_number')) { // если курсор наведён на ссылку
-              el.classList.add('follow-cursor_active') // элементу добавляем активный класс
-            } else { // иначе
-              el.classList.remove('follow-cursor_active') // удаляем активный класс
-            }
-      
-            el.style.left = e.pageX + 'px' // задаём элементу позиционирование слева
-            el.style.top = e.pageY + 'px' // задаём элементу позиционирование сверху
-          })
-        }
-      
-        followCursor() // вызываем функцию followCursor
-      
-      })
-      document.querySelector(".input").addEventListener("click", function() {
-        this.removeAttribute("title");
-      });
-      </script>
-      <!-- Скрипт для копирования EMAIL адресов -->
-      <script>
-          document.querySelector('.container__icon').addEventListener('click', function(e){
-            let emails = document.querySelectorAll('.email__adress');
-            let emailText = '';
-            emails.forEach((email) => {
-              emailText += email.textContent + '\n';
-            })
-          navigator.clipboard.writeText(emailText).catch(function(error) {
-              console.error('Unable to copy to clipboard', error);
-          });
-              })
-              
-      </script>
   </body>
 </html>
