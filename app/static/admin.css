@@ -44,3 +44,7 @@ body {
     flex-direction: row-reverse;
     margin: 20px;
 }
+
+#exit_button {
+    max-height: 50px!important;
+}
