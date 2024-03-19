@@ -1,4 +1,4 @@
-// Скрипт для плавгного скорола вверх сайта при нажатии на кнопку
+// Скрипт для плавного скролkа вверх сайта при нажатии на кнопку
 
 // When the user scrolls down 20px from the top of the document, show the button
 window.onscroll = function () {

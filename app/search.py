@@ -46,6 +46,7 @@ class SearchEngine:
             self.filtered_data = list(filter(lambda item: item['DepartmentID'] == department, self.filtered_data))
 
         if search_text:
+            print(search_text)
             temp_data = list()
             for key in self.filtered_data[0].keys():
                 temp_data += list(filter(lambda item: search_text.lower() in str(item[key]).lower() and item not in temp_data, self.filtered_data))

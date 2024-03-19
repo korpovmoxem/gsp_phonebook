@@ -78,7 +78,7 @@ function createMenuItem(hasChildren, value) {
 
   if (hasChildren) {
     html += `<li>
-        <span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${
+        <span class="menu__items"><a href='/?organization=${
           value.Inn
         }&department=${value.ID}' style="${
       value.Filial === 1 ? "color: red;" : ""
@@ -87,14 +87,14 @@ function createMenuItem(hasChildren, value) {
 
     value.Children.forEach((child) => {
       if (Array.isArray(child.Children) && child.Children.length === 0) {
-        html += `<li><a href='/?&search_text={{ search_text }}&organization=${
+        html += `<li><a href='/?organization=${
           child.Inn
         }&department=${child.ID}' style="${
           child.Filial === 1 ? "color: red;" : ""
         }">${child.Name}</a></li>`;
       }
       if (Array.isArray(child.Children) && child.Children.length > 0) {
-        html += `<li><span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${
+        html += `<li><span class="menu__items"><a href='/?organization=${
           child.Inn
         }&department=${child.ID}' style="${
           child.Filial === 1 ? "color: red;" : ""
@@ -107,7 +107,7 @@ function createMenuItem(hasChildren, value) {
 
     html += `</ul></li>`;
   } else {
-    html += `<li><a href='/?&search_text={{ search_text }}&organization=${
+    html += `<li><a href='/?organization=${
       value.Inn
     }&department=${value.ID}' style="${
       value.Filial === 1 ? "color: red;" : ""
@@ -120,10 +120,10 @@ function createChildItems(children) {
   let html = "";
   children.forEach((child) => {
     if (Array.isArray(child.Children) && child.Children.length === 0) {
-      html += `<li><a href='/?&search_text={{ search_text }}&organization=${child.Inn}&department=${child.ID}'>${child.Name}</a></li>`;
+      html += `<li><a href='/?organization=${child.Inn}&department=${child.ID}'>${child.Name}</a></li>`;
     }
     if (Array.isArray(child.Children) && child.Children.length > 0) {
-      html += `<li><span class="menu__items"><a href='/?&search_text={{ search_text }}&organization=${
+      html += `<li><span class="menu__items"><a href='/?organization=${
         child.Inn
       }&department=${child.ID}'>${child.Name}</a></span>
       <ul class="menu__item">
