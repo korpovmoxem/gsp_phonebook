@@ -963,12 +963,16 @@ th {
   padding: 2px;
 }
 
-.button-open:hover {
-  transform: translateY(2px);
-}
-
 .button-open-now {
   background: transparent;
   border: #fff;
   border-radius: 5px;
+  transition: all 0.1s ease;
+}
+.button-open-now:hover {
+  background: #3aabf1;
+}
+
+.button-open-now:active {
+  background: #1f82c0;
 }
