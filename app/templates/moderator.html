@@ -27,7 +27,7 @@
             <button type="submit" class="btn btn-primary" id="submit_button">Найти сотрудника</button>
         </div>
     </form>
-    <form class="employee_attrs">
+    <form class="employee_attrs" method='post' action='/change_data'>
         {% if employee_info %}
         <div class="employee_fields">
             <table class='table table-borderless table-dark'>
@@ -44,10 +44,8 @@
                     <th><input type="text" class="form-control form-edit" placeholder="Адрес" value="{{ employee_info.Address }}"></th>
                 </tr>
             </table>
-        </div>
-        <form class="save_block" action='/change_data'>
-            <button type="submit" class="btn btn-primary" id="save_button">Сохранить изменения</button>
-        </form>
+        </div>form
+        <button type="submit" class="btn btn-primary" id="save_button">Сохранить изменения</button>
         {% else %}
         {% endif %}
     </form>

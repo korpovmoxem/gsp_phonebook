@@ -44,25 +44,26 @@ class ActiveDirectoryConnection:
             return False
         return True
 
-    def authorize_user(self, username: str) -> bool | str:
+    def authorize_user(self, username: str) -> bool | dict:
         """
         Проверка нахождения учетной записи в необходимой группе Active Directory
         :return Имя пользователя
         """
-        self.__connection.search(
-            search_base=self.__config['AD_SEARCH_TREE'],
-            search_filter=self.__config['AD_FILTER'],
-            attributes=['sAMAccountName', 'cn'],
-            size_limit=0,
-            paged_size=1000,
-            paged_cookie=None,
-        )
-        for entry in self.__connection.entries:
-            entry_info = json.loads(entry.entry_to_json())['attributes']
-            username = re.findall(r'\\(.+)', username)
-            if username and username[0] == entry_info['sAMAccountName'][0]:
-                return entry_info['cn'][0]
-        return False
+        for group in self.__config['AD_FILTER']:
+            self.__connection.search(
+                search_base=self.__config['AD_SEARCH_TREE'],
+                search_filter=self.__config['AD_FILTER'][group],
+                attributes=['sAMAccountName', 'cn'],
+                size_limit=0,
+                paged_size=1000,
+                paged_cookie=None,
+            )
+            for entry in self.__connection.entries:
+                entry_info = json.loads(entry.entry_to_json())['attributes']
+                username = re.findall(r'\\(.+)', username)
+                if username and username[0] == entry_info['sAMAccountName'][0]:
+                    return {'group': group, 'login': entry_info['cn'][0]}
+            return False
 
 
 class CookieUserName:
