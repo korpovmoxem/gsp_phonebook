@@ -955,13 +955,13 @@ th {
 }
 
 .button-open {
-  width: 40px;
-  height: 40px;
-  border: 2px solid #fff;
+  width: 35px;
+  height: 35px;
   border-radius: 5px;
 }
 
 .button-open-now {
-  background: transparent;
+  background: #fff;
   border: #fff;
+  border-radius: 5px;
 }

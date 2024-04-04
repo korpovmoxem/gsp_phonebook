@@ -1,88 +1,88 @@
 body {
-    background-color: #252526
+  background-color: #252526;
 }
 
 #input_form {
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 150px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 150px;
 }
 
 #submit_button {
-    display: flex!important;
-    margin-top: 15px;
-    
+  display: flex !important;
+  margin-top: 15px;
 }
 
 .button_block {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .page_title {
-    margin-top: 50px;
-    font-size: 25px;
-    color: white;
+  margin-top: 50px;
+  font-size: 25px;
+  color: white;
 }
 
 .form-control {
-    background-color: #252526!important;
-    color: white!important;
+  background-color: #252526 !important;
+  color: white !important;
 }
 
 .form-edit {
-    background-color: #000000!important;
+  background-color: #000000 !important;
 }
 
 .form-disabled {
-    border: 0px!important
+  border: 0px !important;
 }
 
 ::placeholder {
-    color: white!important;
-    opacity: 0.5!important;
+  color: white !important;
+  opacity: 0.5 !important;
 }
 
 .exit_block {
-    display: flex;
-    flex-direction: row-reverse;
-    margin: 20px;
+  display: flex;
+  align-items: baseline;
+  flex-direction: row-reverse;
+  margin: 20px;
 }
 
 #exit_button {
-    max-height: 50px!important;
+  max-height: 50px !important;
 }
 
 .employee_fields {
-    margin-top: 75px;
-    color: white
+  margin-top: 75px;
+  color: white;
 }
 
 .admin_name {
-    color: white;
-    padding-right: 15px;
-    text-align: right;
+  color: white;
+  padding-right: 15px;
+  text-align: right;
 }
 
 tr {
-    vertical-align: middle!important;
-    text-align: left;
+  vertical-align: middle !important;
+  text-align: left;
 }
 
 .employee_attrs {
-    max-width: 900px;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 50px;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
 }
 
 .form-check-label {
-    font-weight: normal;
+  font-weight: normal;
 }
