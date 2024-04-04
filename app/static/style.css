@@ -955,15 +955,16 @@ th {
 }
 
 .button-open {
-  width: 30px;
-  height: 30px;
+  width: 33px;
+  height: 33px;
   border-radius: 5px;
-  /* border: 1px solid #fff; */
+  border: 2px solid #fff;
   transition: all 0.1s ease;
+  padding: 2px;
 }
 
 .button-open:hover {
-  /* border: 1px solid #fff; */
+  transform: translateY(2px);
 }
 
 .button-open-now {
