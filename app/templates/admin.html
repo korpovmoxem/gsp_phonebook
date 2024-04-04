@@ -17,7 +17,7 @@
         <p class="admin_name">{{ user_name }}</p>
     </form>
     <div class='page_title'>
-        <p class="text-center">Редактирование информации<br>о сотруднике</p>
+        <p class="text-center">Панель администратора</p>
     </div>
     <form method="get" id="input_form">
         <div class="mb-3">
@@ -56,10 +56,6 @@
                     <th><input type="text" class="form-control form-disabled" placeholder="ФИО" value="{{ employee_info.FullNameRus }}" readonly='readonly' disabled></th>
                 </tr>
                 <tr>
-                    <th>FullNameRus</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="ФИО" value="{{ employee_info.FullNameRus }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
                     <th>DepartmentID</th>
                     <th><input type="text" class="form-control form-disabled" placeholder="Департамент" value="{{ employee_info.DepartmentID }}" readonly='readonly' disabled></th>
                 </tr>
@@ -78,22 +74,52 @@
                 <tr>
                     <th>Email</th>
                     <th><input type="text" class="form-control form-disabled" placeholder="Email" value="{{ employee_info.Email }}" readonly='readonly' disabled></th>
+                    <th>
+                        <div class="form-check form-switch form-check-reverse">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='hide_email'>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
+                        </div>
+                    </th>
                 </tr>
                 <tr>
                     <th>TelephoneNumberCorp</th>
                     <th><input type="text" class="form-control form-disabled" placeholder="Телефон" value="{{ employee_info.TelephoneNumberCorp }}" readonly='readonly' disabled></th>
+                    <th>
+                        <div class="form-check form-switch form-check-reverse">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='hide_telephone_number_corp'>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
+                        </div>
+                    </th>
                 </tr>
                 <tr>
                     <th>MobileNumberCorp</th>
                     <th><input type="text" class="form-control form-disabled" placeholder="Мобильный" value="{{ employee_info.MobileNumberCorp }}" readonly='readonly' disabled></th>
+                    <th>
+                        <div class="form-check form-switch form-check-reverse">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='hide_mobile_number_corp'>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
+                        </div>
+                    </th>
                 </tr>
                 <tr>
                     <th>ExtNumID</th>
                     <th><input type="text" class="form-control form-disabled" placeholder="Внешний телефон" value="{{ employee_info.ExtNumID }}" readonly='readonly' disabled></th>
+                    <th>
+                        <div class="form-check form-switch form-check-reverse">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='hide_ext_num_id'>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
+                        </div>
+                    </th>
                 </tr>
                 <tr>
                     <th>WorkPlace</th>
                     <th><input type="text" class="form-control form-edit" placeholder="Рабочее место" value="{{ employee_info.WorkPlace }}"></th>
+                    <th>
+                        <div class="form-check form-switch form-check-reverse">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='hide_work_place'>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
+                        </div>
+                    </th>
                 </tr>
                 <tr>
                     <th>PhotoID</th>
@@ -106,12 +132,26 @@
                     </th>
                 </tr>
                 <tr>
-                    <th>Order</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Порядок" value="{{ employee_info.Order }}" readonly='readonly' disabled></th>
+                    <th>Order (Employees)</th>
+                    <th><input type="text" class="form-control" placeholder="Порядок сотрудника" value="{{ employee_info.Order }}"></th>
+                </tr>
+                <tr>
+                    <th>Order (Positions)</th>
+                    <th><input type="text" class="form-control form-disabled" placeholder="Порядок должности" value="{{ employee_info.Order }}" readonly='readonly' disabled></th>
+                </tr>
+                <tr>
+                    <th>Order (Categories)</th>
+                    <th><input type="text" class="form-control form-disabled" placeholder="Порядок категории" value="{{ employee_info.Order }}" readonly='readonly' disabled></th>
                 </tr>
                 <tr>
                     <th>Address</th>
                     <th><input type="text" class="form-control form-edit" placeholder="Адрес" value="{{ employee_info.Address }}"></th>
+                    <th>
+                        <div class="form-check form-switch form-check-reverse">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='hide_adress'>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
+                        </div>
+                    </th>
                 </tr>
                 <tr>
                     <th>insert_date</th>
@@ -123,7 +163,7 @@
                 </tr>
             </table>
         </div>
-        <form class="save_block" action='/admin'>
+        <form class="save_block" action='/change_data'>
             <button type="submit" class="btn btn-primary" id="save_button">Сохранить изменения</button>
         </form>
         {% else %}

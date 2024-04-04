@@ -12,8 +12,11 @@
     <link href="{{ url_for('static', path='/admin.css') }}" rel=stylesheet>
 </head>
 <body>
+  <form class="exit_block" action='/'>
+    <button type="submit" class="btn btn-primary" id="exit_button">Назад</button>
+</form>
   <div class='page_title'>
-    <p class="text-center">Панель администратора<br>телефонного справочника</p>
+    <p class="text-center">Сервисный кабинет<br>телефонного справочника</p>
   </div>
   <form method="post" name="authentication_credentials" id="input_form">
     <div class="input-group mb-3">
