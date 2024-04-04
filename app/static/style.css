@@ -958,10 +958,16 @@ th {
   width: 35px;
   height: 35px;
   border-radius: 5px;
+  border: 1px solid #afaaaa;
+  transition: all 0.1s ease;
+}
+
+.button-open:hover {
+  border: 1px solid #fff;
 }
 
 .button-open-now {
-  background: #fff;
+  background: transparent;
   border: #fff;
   border-radius: 5px;
 }
