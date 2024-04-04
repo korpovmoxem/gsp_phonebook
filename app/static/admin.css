@@ -34,6 +34,14 @@ body {
     color: white!important;
 }
 
+.form-edit {
+    background-color: #000000!important;
+}
+
+.form-disabled {
+    border: 0px!important
+}
+
 ::placeholder {
     color: white!important;
     opacity: 0.5!important;
@@ -47,4 +55,34 @@ body {
 
 #exit_button {
     max-height: 50px!important;
+}
+
+.employee_fields {
+    margin-top: 75px;
+    color: white
+}
+
+.admin_name {
+    color: white;
+    padding-right: 15px;
+    text-align: right;
+}
+
+tr {
+    vertical-align: middle!important;
+    text-align: left;
+}
+
+.employee_attrs {
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+}
+
+.form-check-label {
+    font-weight: normal;
 }

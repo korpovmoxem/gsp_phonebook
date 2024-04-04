@@ -1,5 +1,6 @@
 import json
 from typing import Annotated
+from datetime import datetime
 
 import uvicorn
 from fastapi import FastAPI, Request, HTTPException, status, Form, Response, Cookie
@@ -16,12 +17,13 @@ app.mount('/static', StaticFiles(directory='static'), name='static')
 
 templates = Jinja2Templates(directory='templates')
 
-
+start_time = datetime.now()
 phonebook_data = DataBaseStorage()
+print(datetime.now() - start_time)
 
 
 @app.get('/')
-def main_route(request: Request, search_text: str = '', department: str = '', organization: int = '', page: int = 0):
+def main_route(request: Request, search_text: str = '', department: str | None = None, organization: int | None = None, page: int = 0):
     return templates.TemplateResponse('mainpage.html', {
         'request': request,
         'items': phonebook_data.search(search_text, department, organization, page=page),
@@ -75,21 +77,33 @@ def login_page(
 
 @app.get('/admin')
 @app.post('/admin')
-def admin_page(request: Request, token: str | None = Cookie(default=None), employee_id: str = ''):
+def admin_page(
+        request: Request,
+        token: str | None = Cookie(default=None),
+        employee_id: str | None = None,
+        hide_photo_id: str | None = None,
+
+):
     if not token:
         return RedirectResponse('/login')
 
-    if not ActiveDirectoryConnection().authorize_user(CookieUserName.verify_token(token)):
+    user_name = ActiveDirectoryConnection().authorize_user(CookieUserName.verify_token(token))
+    if not user_name:
         raise HTTPException(
             status_code=status.HTTP_401_FORBIDDEN,
             detail="Токен cookie не верифицирован",
         )
 
+    employee_info = None
     if employee_id:
-        pass
-
+        employee_info = list(filter(lambda employee: employee['ID'] == employee_id, phonebook_data.employees))
+        if employee_info:
+            employee_info = employee_info[0]
     return templates.TemplateResponse('admin.html', {
         'request': request,
+        'employee_id': employee_id,
+        'employee_info': employee_info,
+        'user_name': user_name,
     })
 
 
@@ -101,4 +115,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+    uvicorn.run(app, host='172.16.153.102', port=8000)

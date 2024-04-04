@@ -1,3 +1,6 @@
+import json
+from datetime import datetime
+
 import pyodbc
 import yaml
 from yaml.loader import SafeLoader
@@ -66,21 +69,24 @@ class DataBaseStorage(SearchEngine):
         :param department_list: Массив со всеми департаментами
         """
         org_structure = list()
-        department = list(filter(lambda dep: dep['ID'] == employee['DepartmentID'] and
-                                 dep['OrganizationID'] == employee['OrganizationID'], department_list))[0]
-
-        if department['ParentID'] != '00000000-0000-0000-0000-000000000000':
-            ruk_info = list(filter(lambda ruk: ruk['ID'] == department['Ruk_ID'], employee_list))[0]
-            org_structure.append(
-                {
-                    'DepartmentName': department['Name'],
-                    'DepartmentID': department['ID'],
-                    'OrganizationID': department['OrganizationID'],
-                    'Name': ruk_info['FullNameRus'],
-                    'PositionTitle': ruk_info['PositionTitle'],
-                }
-            )
-            org_structure.append(self.__fill_organizational_structure(ruk_info, employee_list, department_list))
+        if employee['ParentID'] != '00000000-0000-0000-0000-000000000000':
+            if employee['ID'] != employee['BossID']:
+                boss_info = list(filter(lambda boss: boss['ID'] == employee['BossID'], employee_list))
+                if not boss_info:
+                    return org_structure
+                else:
+                    boss_info = boss_info[0]
+                org_structure += [
+                    {
+                        'DepartmentName': employee['DepartmentName'],
+                        'DepartmentID': employee['DepartmentID'],
+                        'OrganizationID': employee['OrganizationID'],
+                        'FullNameRus': boss_info['FullNameRus'],
+                        'PositionTitle': boss_info['PositionTitle'],
+                        'ID': boss_info['ID']
+                    }
+                ]
+                org_structure += self.__fill_organizational_structure(boss_info, employee_list, department_list)
 
         return org_structure
 
@@ -112,22 +118,38 @@ class DataBaseStorage(SearchEngine):
         self.departments = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.departments")
         self.organizations = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.organizations")
 
-        # Дополнение массива названием департамента и компании
-        for row in self.employees:
-            row['OrganizationName'] = list(filter(lambda org: org['ID'] == row['OrganizationID'], self.organizations))[0]['Name']
-            department_name = list(filter(lambda dep: dep['ID'] == row['DepartmentID'] and dep['OrganizationID'] == row['OrganizationID'], self.departments))
-            if department_name:
-                row['DepartmentName'] = department_name[0]['Name']
-            else:
-                row['DepartmentName'] = ''
-                print(row)
+        try:
+            with open('employees.json', 'r') as file:
+                self.employees = json.load(file)
+        except FileNotFoundError:
+            # Дополнение массива названием департамента и компании
+            for row in self.employees:
+                row['OrgStructure'] = list()
+                row['insert_date'] = row['insert_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['insert_date'], datetime) else row['insert_date']
+                row['update_date'] = row['update_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['update_date'], datetime) else row['update_date']
+                row['OrganizationName'] = list(filter(lambda org: org['ID'] == row['OrganizationID'], self.organizations))[0]['Name']
+                department = list(filter(lambda dep: dep['ID'] == row['DepartmentID'] and dep['OrganizationID'] == row['OrganizationID'], self.departments))
+                if department:
+                    row['DepartmentName'] = department[0]['Name']
+                    row['BossID'] = department[0]['BossID']
+                    row['ParentID'] = department[0]['ParentID']
+
+                else:
+                    row['DepartmentName'] = ''
+                    row['BossID'] = ''
+                    row['ParentID'] = ''
 
             # Формирование оргструктуры сотрудника
-            #row['OrgStructure'] = self.__fill_organizational_structure(row, self.employees, self.departments)
+            for row in self.employees:
+                if row['DepartmentName']:
+                    row['OrgStructure'] += self.__fill_organizational_structure(row, self.employees, self.departments)
+
+            with open('employees.json', 'w') as file:
+                json.dump(self.employees, file, ensure_ascii=False, indent=4)
 
         # Формирование древовидной структуры департаментов
         self.organization_tree = list()
-        for organization in list(sorted(self.organizations, key=lambda org: org['order'])):
+        for organization in list(sorted(self.organizations, key=lambda org: org['Order'])):
             child_tree = {
                 'ID': organization['ID'],
                 'Name': organization['Name'],

@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Вход</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -19,10 +18,10 @@
   <form method="post" name="authentication_credentials" id="input_form">
     <div class="input-group mb-3">
       <span class="input-group-text" id="basic-addon1">gsprom\</span>
-      <input type="text" class="form-control" placeholder="Логин" aria-label="Логин" aria-describedby="basic-addon1" name="username">
+      <input type="text" class="form-control form-edit" placeholder="Логин" aria-label="Логин" aria-describedby="basic-addon1" name="username">
     </div>
       <div class="form-group">
-        <input type="password" class="form-control" name="password" placeholder="Пароль">
+        <input type="password" class="form-control form-edit" name="password" placeholder="Пароль">
       </div>
       <div class="button_block">
         <button type="submit" class="btn btn-primary" id="submit_button">Войти</button>
