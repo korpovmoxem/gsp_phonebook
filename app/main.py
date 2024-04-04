@@ -144,7 +144,7 @@ def moderator_page(
 @app.get('/change_data')
 @app.post('/change_data')
 async def change_data(request: Request):
-    print(request.)
+    print(request.r)
     a = await request.form()
     return dict(a)
 
