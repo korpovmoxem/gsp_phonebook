@@ -27,8 +27,9 @@
             <button type="submit" class="btn btn-primary" id="submit_button">Найти сотрудника</button>
         </div>
     </form>
+    {% if employee_info %}
     <form class="employee_attrs" method="post" action="/change_data">
-        {% if employee_info %}
+        <input type="hidden" name="employee_id" value="{{ employee_id }}">
         <div class="employee_fields">
             <table class='table table-borderless table-dark'>
                 <tr>
@@ -167,5 +168,6 @@
         {% else %}
         {% endif %}
     </form>
+
 </body>
 </html>

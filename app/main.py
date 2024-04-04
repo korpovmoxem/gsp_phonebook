@@ -92,7 +92,7 @@ def admin_page(
     user_name = ActiveDirectoryConnection().authorize_user(CookieUserName.verify_token(token))
     if not user_name:
         raise HTTPException(
-            status_code=status.HTTP_401_FORBIDDEN,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="Токен cookie не верифицирован",
         )
 
@@ -116,6 +116,7 @@ def moderator_page(
         request: Request,
         token: str | None = Cookie(default=None),
         employee_id: str | None = None,
+        confirmation_text: bool = False,
 ):
     if not token:
         return RedirectResponse('/login')
@@ -143,10 +144,27 @@ def moderator_page(
 
 @app.get('/change_data')
 @app.post('/change_data')
-async def change_data(request: Request):
-    print(request.r)
-    a = await request.form()
-    return dict(a)
+async def change_data(
+        request: Request,
+        token: str | None = Cookie(default=None),
+):
+    if not token:
+        return RedirectResponse('/login')
+
+    post_data = await request.form()
+
+    token_data = CookieUserName.verify_token(token)
+    user_info = ActiveDirectoryConnection().authorize_user(token_data)
+    if not user_info:
+        raise HTTPException(
+            status_code=status.HTTP_401_FORBIDDEN,
+            detail="Токен cookie не верифицирован",
+        )
+
+    response = RedirectResponse(f"/{user_info['group']}?employee_id={post_data['employee_id']}&confirmation_text=True")
+    c = CookieUserName(token_data)
+    response.set_cookie(key=c.key, value=c.value, max_age=c.max_age)
+    return response
 
 
 @app.get('/logout')
@@ -157,4 +175,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+    uvicorn.run(app, host='172.16.153.102', port=8000)
