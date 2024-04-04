@@ -63,13 +63,15 @@ def login_page(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Неверный логин или пароль",
         )
-    if not ad_conn.authorize_user(username):
+
+    user_info = ad_conn.authorize_user(username)
+    if not user_info:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Недостаточно прав для данного раздела",
         )
 
-    response = RedirectResponse('/admin')
+    response = RedirectResponse(f'/{user_info['group']}')
     c = CookieUserName(username)
     response.set_cookie(key=c.key, value=c.value, max_age=c.max_age)
     return response
@@ -99,12 +101,50 @@ def admin_page(
         employee_info = list(filter(lambda employee: employee['ID'] == employee_id, phonebook_data.employees))
         if employee_info:
             employee_info = employee_info[0]
+
     return templates.TemplateResponse('admin.html', {
         'request': request,
         'employee_id': employee_id,
         'employee_info': employee_info,
-        'user_name': user_name,
+        'user_name': user_name['login'],
     })
+
+
+@app.get('/moderator')
+@app.post('/moderator')
+def moderator_page(
+        request: Request,
+        token: str | None = Cookie(default=None),
+        employee_id: str | None = None,
+):
+    if not token:
+        return RedirectResponse('/login')
+
+    user_name = ActiveDirectoryConnection().authorize_user(CookieUserName.verify_token(token))
+    if not user_name:
+        raise HTTPException(
+            status_code=status.HTTP_401_FORBIDDEN,
+            detail="Токен cookie не верифицирован",
+        )
+
+    employee_info = None
+    if employee_id:
+        employee_info = list(filter(lambda employee: employee['ID'] == employee_id, phonebook_data.employees))
+        if employee_info:
+            employee_info = employee_info[0]
+
+    return templates.TemplateResponse('moderator.html', {
+        'request': request,
+        'employee_id': employee_id,
+        'employee_info': employee_info,
+        'user_name': user_name['login'],
+    })
+
+
+@app.get('/change_data')
+@app.post('/change_data')
+def change_data(request: Request):
+    return request.path_params
 
 
 @app.get('/logout')
