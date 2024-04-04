@@ -109,7 +109,7 @@ def admin_page(
 
 @app.get('/logout')
 def logout():
-    response = RedirectResponse('/login')
+    response = RedirectResponse('/')
     response.delete_cookie('token')
     return response
 
