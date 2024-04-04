@@ -143,8 +143,10 @@ def moderator_page(
 
 @app.get('/change_data')
 @app.post('/change_data')
-def change_data(request: Request):
-    return request.path_params
+async def change_data(request: Request):
+    print(request.)
+    a = await request.form()
+    return dict(a)
 
 
 @app.get('/logout')
