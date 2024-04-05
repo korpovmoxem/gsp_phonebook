@@ -129,14 +129,14 @@
           </form>
         </div>
         <!-- Таблица с пользователями телефонного справочника и бутсраповский класс с колонками-->
-        <div class="row col-sm-9">
         {% for department in items %}
-          <div class='department_name'>
+        <div class='department_name'>
               {% if department %}
               {{ department[0].DepartmentName }}
               {% else %}
               {% endif %}
-          </div>
+
+        <div class="col-sm-9">
           <div class='items_table'>
             <table class='table table-bordered table-hover'>
             <tr>
@@ -338,8 +338,10 @@
         </div>
         {% endfor %}
       </div>
+      </div>
     </div>
       </div>
+
   <!-- Подвал сайта -->
   <div class="border-footer"></div>
       <div class="container">
