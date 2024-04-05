@@ -684,6 +684,15 @@ th {
   opacity: 0.5;
 }
 
+.clear_search {
+  display: flex;
+  justify-content: center;
+}
+
+.clear_search_button {
+  border-radius: 5px 5px 5px 5px;
+}
+
 .dark .system_info {
   color: #dbdfd1;
 }
