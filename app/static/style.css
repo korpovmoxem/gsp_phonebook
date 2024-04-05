@@ -781,6 +781,11 @@ th {
 
 /* Медиа запросы */
 @media (max-width: 1604px) {
+  .col-wrapper {
+    width: 800px;
+  }
+}
+@media (max-width: 1604px) {
   .nav {
     padding-top: 60px;
   }
@@ -979,4 +984,8 @@ th {
 
 .button-open-now:active {
   background: #1f82c0;
+}
+
+.col-wrapper {
+  width: 1300px;
 }
