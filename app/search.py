@@ -30,7 +30,7 @@ class SearchEngine:
         else:
             return self.filtered_data[int(str(page) + '01'):int(str(page + 1) + '01')]
 
-    def search(self, search_text: str = '', department: str = '', organization: int = '', page: int = 0) -> list:
+    def search(self, search_text: str = '', department: str = '', organization: int | str = '', page: int = 0) -> list:
         """
         Поиск по всему массиву
         :param search_text: Строка из поля поиска

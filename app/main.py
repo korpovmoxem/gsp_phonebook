@@ -23,7 +23,8 @@ print(datetime.now() - start_time)
 
 
 @app.get('/')
-def main_route(request: Request, search_text: str = '', department: str | None = None, organization: int | None = None, page: int = 0):
+def main_route(request: Request, search_text: str = '', department: str = '', organization: int = 0, page: int = 0):
+    print(department)
     return templates.TemplateResponse('mainpage.html', {
         'request': request,
         'items': phonebook_data.search(search_text, department, organization, page=page),

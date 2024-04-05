@@ -49,7 +49,6 @@ class ActiveDirectoryConnection:
         Проверка нахождения учетной записи в необходимой группе Active Directory
         :return Имя пользователя
         """
-        print(username)
         for group in self.__config['AD_FILTER']:
             self.__connection.search(
                 search_base=self.__config['AD_SEARCH_TREE'],

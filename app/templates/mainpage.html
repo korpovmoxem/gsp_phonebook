@@ -129,16 +129,20 @@
           </form>
         </div>
         <!-- Таблица с пользователями телефонного справочника и бутсраповский класс с колонками-->
-        {% for department in items %}
+        {% for department_employees in items %}
         <div class='department_name'>
-              {% if department %}
-              {{ department[0].DepartmentName }}
-              {% else %}
-              {% endif %}
-
         <div class="col-sm-9 col-wrapper">
           <div class='items_table'>
             <table class='table table-bordered table-hover'>
+              {% if department_employees and department and organization %}
+              <th colspan="2">{{ department_employees[0].DepartmentName }}</th>
+              <th colspan="2">{{ department_employees[0].OrganizationName }}</th>
+              {% else %}
+              {% if department_employees and organization %}
+              <th colspan="4">{{ department_employees[0].OrganizationName }}</th>
+              {% else %}
+              {% endif %}
+              {% endif %}
             <tr>
               <th>ФИО</th>
               <th>Должность</th>
@@ -146,7 +150,7 @@
               <th>Телефон</th>
             </tr>      
             
-            {% for item in department %}
+            {% for item in department_employees %}
               <TR data-bs-toggle="modal" data-bs-target="#modal_{{ item.ID }}"  style="cursor: pointer">
                 <TD class='table_name'>
                 <div class="container text-center">
@@ -157,8 +161,8 @@
                 </div>
                 </TD>
                 <TD class='table_job_title'>{{item.PositionTitle}}</TD>
-                <TD class='table_prefix'>{{item.TelephoneNumberCorp}}</TD>
-                <TD class='table_phone_code'>{{item.TelephoneNumberCorp}}</TD>
+                <TD class='table_prefix'>{{item.TelephoneNumberCorp[:2]}}</TD>
+                <TD class='table_phone_code'>{{item.TelephoneNumberCorp[2:]}}</TD>
               </TR>
               
             <!-- Модальное окно -->
@@ -197,7 +201,7 @@
                     </div>
                     <div class='col'>
                         <div class='organization_value' style="text-align: right; font-size: 13px;">
-                          {{item.OrganizationName}}
+                          <a class="organization" href='?&organization={{ item.OrganizationID }}'>{{ item.OrganizationName }}</a>
                       </div>
                     </div>
                   </div>
@@ -210,7 +214,7 @@
                     </div>
                     <div class='col'>
                         <div class='department_value' style="text-align: right; font-size: 13px;">
-                          {{item.DepartmentName}}
+                          <a class="department" href='?department={{ item.DepartmentID }}&organization={{ item.OrganizationID }}'>{{ item.DepartmentName }}</a>
                       </div>
                     </div>
                   </div>
@@ -223,7 +227,7 @@
                     </div>
                     <div class='col'>
                       <div class='prefix_value' style="text-align: right; font-size: 13px;">
-                        {{item.TelephoneNumberCorp}}
+                        {{item.TelephoneNumberCorp[:2]}}
                       </div>
                     </div>
                   </div>
@@ -236,7 +240,7 @@
                     </div>
                     <div class='col'>
                         <div class='phone_value' style="text-align: right; font-size: 13px;">
-                          {{item.TelephoneNumberCorp}}
+                          {{item.TelephoneNumberCorp[2:]}}
                       </div>
                     </div>
                   </div>

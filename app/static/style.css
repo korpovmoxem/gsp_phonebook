@@ -679,8 +679,9 @@ th {
 .system_info {
   margin-top: 40px;
   text-align: right;
-  font-size: 12px;
+  font-size: 10px;
   color: #000000;
+  opacity: 0.5;
 }
 
 .dark .system_info {
