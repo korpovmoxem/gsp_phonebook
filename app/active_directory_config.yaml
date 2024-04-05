@@ -4,4 +4,4 @@ AD_SERVER: gsprom.local
 AD_SEARCH_TREE: OU=_GSPROM-CENTRAL,DC=GSPROM,DC=LOCAL
 AD_FILTER:
   admin: (&(objectClass=user)(memberOf=CN=Phonebook_Admin,OU=Phonebook,OU=ITSystems,OU=GROUPS,OU=_GSPROM-CENTRAL,DC=GSPROM,DC=LOCAL))
-  moderator: (&(objectClass=user)(memberOf=CN=Phonebook_Admin,OU=Phonebook,OU=ITSystems,OU=GROUPS,OU=_GSPROM-CENTRAL,DC=GSPROM,DC=LOCAL))
+  moderator: (&(objectClass=user)(memberOf=CN=Phonebook_Moderator,OU=Phonebook,OU=ITSystems,OU=GROUPS,OU=_GSPROM-CENTRAL,DC=GSPROM,DC=LOCAL))

@@ -49,6 +49,7 @@ class ActiveDirectoryConnection:
         Проверка нахождения учетной записи в необходимой группе Active Directory
         :return Имя пользователя
         """
+        print(username)
         for group in self.__config['AD_FILTER']:
             self.__connection.search(
                 search_base=self.__config['AD_SEARCH_TREE'],
@@ -60,10 +61,9 @@ class ActiveDirectoryConnection:
             )
             for entry in self.__connection.entries:
                 entry_info = json.loads(entry.entry_to_json())['attributes']
-                username = re.findall(r'\\(.+)', username)
-                if username and username[0] == entry_info['sAMAccountName'][0]:
+                if username and re.findall(r'\\(.+)', username)[0] == entry_info['sAMAccountName'][0]:
                     return {'group': group, 'login': entry_info['cn'][0]}
-            return False
+        return False
 
 
 class CookieUserName:
@@ -98,4 +98,4 @@ class CookieUserName:
     def __init__(self, username: str):
         self.key = 'token'
         self.value = (Fernet(self.load_cookie_key()).encrypt(bytes(username, 'utf-8'))).decode('utf-8')
-        self.max_age = 1800     # Время жизни cookie в секундах
+        self.max_age = 1800  # Время жизни cookie в секундах
