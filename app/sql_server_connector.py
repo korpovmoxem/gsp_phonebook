@@ -17,7 +17,7 @@ class SqlServerConnector:
         with open('sql_server_config.yaml', 'r') as file:
             sql_server_config = yaml.load(file, Loader=SafeLoader)
 
-        sql_connector = pyodbc.connect(
+        self.__sql_connector = pyodbc.connect(
             f'DRIVER={sql_server_config["DRIVER"]};'
             f'SERVER={sql_server_config["SERVER"]};'
             f'UID={sql_server_config["UID"]};'
@@ -26,15 +26,19 @@ class SqlServerConnector:
             f'Database={sql_server_config["Database"]};'
         )
         self.db_name = f'{sql_server_config["Database"]}.dbo'
-        self.__cursor = sql_connector.cursor()
+        self.__cursor = self.__sql_connector.cursor()
 
-    def __execute_query(self, query: str) -> list:
+    def __execute_query(self, query: str) -> list | None:
         """
-        Выполняет запрос и возвращает массив типа list
-        :param query: строка с SQL запросом
+        Выполняет запрос и возвращает массив типа list если был указан 'SELECT' запрос
+        :param query: Строка с SQL запросом
         :return: Данные, полученные запросом в БД
         """
-        return self.__cursor.execute(query).fetchall()
+        if 'select' in query.lower():
+            return self.__cursor.execute(query).fetchall()
+
+        self.__cursor.execute(query)
+        self.__sql_connector.commit()
 
     def __get_column_names(self):
         """
@@ -46,7 +50,7 @@ class SqlServerConnector:
     def get_formatted_data(self, query: str) -> list:
         """
         Возвращает данные, полученные SQL запросом в формате dict, где ключ - название столбца из таблицы
-        :param query: строка с SQL запросом
+        :param query: Строка с SQL запросом
         :return: Список, в котором каждый элемент - строка таблицы в формате dict
         """
         raw_data = self.__execute_query(query)
@@ -54,6 +58,19 @@ class SqlServerConnector:
             raw_data[i] = list(map(lambda x: '' if not x else x, raw_data[i]))
         data_fields = self.__get_column_names()
         return list(map(lambda x: dict(zip(data_fields, x)), raw_data))
+
+    def update_data(self, data: dict):
+        """
+        Обновляет данные в таблицах, в зависимости от ключа в словаре
+        :param data: Словарь, в котором ключ - название атрибута таблицы в БД, значение - новое значение атрибута
+        :return:
+        """
+        for key, value in data.items():
+            if 'Hide' in key:
+                query = f"UPDATE HidedEmployees SET {key[4:]} = {value}"
+            else:
+                query = f"UPDATE EditedEmployees SET {key} = {value}"
+            self.__execute_query(query)
 
 
 class DataBaseStorage(SearchEngine):

@@ -5,7 +5,9 @@ class SearchEngine:
 
     def __init__(self):
         self.employees = list()
+        self.departments = list()
         self.filtered_data = list()
+        self.parent_departments_data = list()
 
     def get_pages_count(self) -> list:
         """
@@ -45,11 +47,26 @@ class SearchEngine:
         if department and department != organization:
             self.filtered_data = list(filter(lambda item: item['DepartmentID'] == department, self.filtered_data))
 
+            # Поиск сотрудников родительских подразделений
+            department_info = list(filter(lambda x: x['ID'] == department, self.departments))[0]
+            while department_info['ParentID'] != '00000000-0000-0000-0000-000000000000':
+                department_info = list(filter(lambda x: x['ID'] == department_info['ParentID'] and department_info['OrganizationID'] == x['OrganizationID'], self.departments))
+                if not department_info:
+                    break
+                department_info = department_info[0]
+                employees = list(filter(lambda x: x['OrganizationID'] == department_info['OrganizationID'] and x['DepartmentID'] == department_info['ID'], self.employees))
+                if employees:
+                    self.parent_departments_data.append(employees)
+
         if search_text:
             temp_data = list()
             for key in self.filtered_data[0].keys():
                 temp_data += list(filter(lambda item: search_text.lower() in str(item[key]).lower() and item not in temp_data, self.filtered_data))
             self.filtered_data = temp_data
-        return self.get_page_data(page)
+
+        if self.parent_departments_data and self.filtered_data:
+            return [self.filtered_data] + self.parent_departments_data
+
+        return [self.get_page_data(page)]
 
 

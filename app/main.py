@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 
-from sql_server_connector import DataBaseStorage
+from sql_server_connector import DataBaseStorage, SqlServerConnector
 from authentication import ActiveDirectoryConnection, CookieUserName
 
 
@@ -24,6 +24,8 @@ print(datetime.now() - start_time)
 
 @app.get('/')
 def main_route(request: Request, search_text: str = '', department: str | None = None, organization: int | None = None, page: int = 0):
+    for i in phonebook_data.search(search_text, department, organization, page=page):
+        print(i)
     return templates.TemplateResponse('mainpage.html', {
         'request': request,
         'items': phonebook_data.search(search_text, department, organization, page=page),
@@ -71,7 +73,7 @@ def login_page(
             detail="Недостаточно прав для данного раздела",
         )
 
-    response = RedirectResponse(f'/{user_info['group']}')
+    response = RedirectResponse(f'/admin')
     c = CookieUserName(username)
     response.set_cookie(key=c.key, value=c.value, max_age=c.max_age)
     return response
@@ -83,14 +85,14 @@ def admin_page(
         request: Request,
         token: str | None = Cookie(default=None),
         employee_id: str | None = None,
-        hide_photo_id: str | None = None,
-
+        confirmation_text: bool = False,
+        HidePhotoID: str | None = None,
 ):
     if not token:
         return RedirectResponse('/login')
 
-    user_name = ActiveDirectoryConnection().authorize_user(CookieUserName.verify_token(token))
-    if not user_name:
+    user_info = ActiveDirectoryConnection().authorize_user(CookieUserName.verify_token(token))
+    if not user_info:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Токен cookie не верифицирован",
@@ -102,43 +104,12 @@ def admin_page(
         if employee_info:
             employee_info = employee_info[0]
 
-    return templates.TemplateResponse('admin.html', {
+    return templates.TemplateResponse(f'{user_info["group"]}.html', {
         'request': request,
         'employee_id': employee_id,
         'employee_info': employee_info,
-        'user_name': user_name['login'],
-    })
-
-
-@app.get('/moderator')
-@app.post('/moderator')
-def moderator_page(
-        request: Request,
-        token: str | None = Cookie(default=None),
-        employee_id: str | None = None,
-        confirmation_text: bool = False,
-):
-    if not token:
-        return RedirectResponse('/login')
-
-    user_name = ActiveDirectoryConnection().authorize_user(CookieUserName.verify_token(token))
-    if not user_name:
-        raise HTTPException(
-            status_code=status.HTTP_401_FORBIDDEN,
-            detail="Токен cookie не верифицирован",
-        )
-
-    employee_info = None
-    if employee_id:
-        employee_info = list(filter(lambda employee: employee['ID'] == employee_id, phonebook_data.employees))
-        if employee_info:
-            employee_info = employee_info[0]
-
-    return templates.TemplateResponse('moderator.html', {
-        'request': request,
-        'employee_id': employee_id,
-        'employee_info': employee_info,
-        'user_name': user_name['login'],
+        'user_name': user_info['login'],
+        'confirmation_text': confirmation_text,
     })
 
 
@@ -152,6 +123,7 @@ async def change_data(
         return RedirectResponse('/login')
 
     post_data = await request.form()
+    post_data = dict(post_data)
 
     token_data = CookieUserName.verify_token(token)
     user_info = ActiveDirectoryConnection().authorize_user(token_data)
@@ -160,8 +132,12 @@ async def change_data(
             status_code=status.HTTP_401_FORBIDDEN,
             detail="Токен cookie не верифицирован",
         )
+    '''
+    Добавить проверку на наличие прав для изменения определенных полей
+    '''
+    SqlServerConnector().update_data(post_data)
 
-    response = RedirectResponse(f"/{user_info['group']}?employee_id={post_data['employee_id']}&confirmation_text=True")
+    response = RedirectResponse(f"/{user_info['group']}?employee_id={post_data['ID']}&confirmation_text=True")
     c = CookieUserName(token_data)
     response.set_cookie(key=c.key, value=c.value, max_age=c.max_age)
     return response
