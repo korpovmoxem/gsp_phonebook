@@ -40,6 +40,7 @@ class SearchEngine:
         :return: Отфильтрованный массив по указанным параметрам
         """
         self.filtered_data = self.employees
+        self.parent_departments_data = list()
 
         if organization:
             self.filtered_data = list(filter(lambda item: item['OrganizationID'] == organization, self.filtered_data))
@@ -50,6 +51,7 @@ class SearchEngine:
             # Поиск сотрудников родительских подразделений
             department_info = list(filter(lambda x: x['ID'] == department, self.departments))[0]
             while department_info['ParentID'] != '00000000-0000-0000-0000-000000000000':
+                print(department_info['ID'], department_info['ParentID'])
                 department_info = list(filter(lambda x: x['ID'] == department_info['ParentID'] and department_info['OrganizationID'] == x['OrganizationID'], self.departments))
                 if not department_info:
                     break
