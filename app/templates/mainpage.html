@@ -91,6 +91,8 @@
         </select> -->
         <input  type='search' id='search_text' value='{{ search_text }}' class='input-line inputBox' name=search_text
         title='Поиск осуществляется одновременно по всем атрибутам (ФИО, отдел, телефон и тд.). Для сброса результатов поиска - нажмите "Искать" с пустым полем' data-toggle="tooltip" data-bs-placement="top">
+        <input type="hidden" name="department" value="{{ department }}">
+        <input type="hidden" name="organization" value="{{ organization }}">
         <input id='search' class='btn btn-primary' type='submit' value='Искать'>
         <span class="newText"></span>
         <!-- Копирование емаил адресов  -->
@@ -135,20 +137,26 @@
           <div class='items_table'>
             <table class='table table-bordered table-hover'>
               {% if department_employees and department and organization %}
+              <thead>
               <th colspan="2">{{ department_employees[0].DepartmentName }}</th>
               <th colspan="2">{{ department_employees[0].OrganizationName }}</th>
+              </thead>
               {% else %}
               {% if department_employees and organization %}
+              <thead>
               <th colspan="4" style="text-align: right">{{ department_employees[0].OrganizationName }}</th>
+              </thead>
               {% else %}
               {% endif %}
               {% endif %}
+              <thead>
             <tr>
               <th>ФИО</th>
               <th>Должность</th>
               <th>Префикс</th>
               <th>Телефон</th>
-            </tr>      
+            </tr>
+              </thead>
             
             {% for item in department_employees %}
               <TR data-bs-toggle="modal" data-bs-target="#modal_{{ item.ID }}"  style="cursor: pointer">
