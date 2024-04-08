@@ -30,6 +30,7 @@ def main_route(request: Request, search_text: str = '', department: str = '', or
         'items': phonebook_data.search(search_text, department, organization, page=page),
         'page': page,
         'department': department,
+        'department_name': phonebook_data.get_department_name(department),
         'organization': organization,
         'pages_count': phonebook_data.get_pages_count(),
         'search_text': search_text,

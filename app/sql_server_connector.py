@@ -186,6 +186,9 @@ class DataBaseStorage(SearchEngine):
                 )
             self.organization_tree.append(child_tree)
 
+    def get_orgsctructure_name(self, department_id: str, organization_id: int) -> dict:
+        return list(filter(lambda x: x['ID'] == department_id, self.departments and x['OrganizationID'] == organization_id))[0]['Name']
+
 
 if __name__ == '__main__':
     test = DataBaseStorage()
