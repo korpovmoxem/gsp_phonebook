@@ -796,6 +796,9 @@ th {
   }
 }
 @media (max-width: 1624px) {
+  .table_job_title {
+    max-width: 400px;
+  }
   .col-wrapper {
     max-width: 1200px;
   }
@@ -832,6 +835,9 @@ th {
 }
 
 @media (max-width: 1368px) {
+  .table_job_title {
+    max-width: 300px;
+  }
   .col-wrapper {
     max-width: 900px;
   }
@@ -852,6 +858,9 @@ th {
 }
 
 @media (max-width: 1200px) {
+  .table_job_title {
+    max-width: 250px;
+  }
   .col-wrapper {
     max-width: 800px;
   }
@@ -907,6 +916,9 @@ th {
 }
 
 @media (max-width: 1100px) {
+  .table_job_title {
+    max-width: 200px;
+  }
   .col-wrapper {
     max-width: 700px;
   }
@@ -1024,4 +1036,8 @@ th {
 .clear_search_button {
   width: 150px;
   height: 40px;
+}
+
+.table_job_title {
+  width: 500px;
 }
