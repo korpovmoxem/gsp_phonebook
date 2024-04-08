@@ -24,14 +24,12 @@ print(datetime.now() - start_time)
 
 @app.get('/')
 def main_route(request: Request, search_text: str = '', department: str = '', organization: int = 0, page: int = 0):
-    print(department)
+    print(phonebook_data.get_derp_org_info(organization, department))
     return templates.TemplateResponse('mainpage.html', {
         'request': request,
         'items': phonebook_data.search(search_text, department, organization, page=page),
         'page': page,
-        'department': department,
-        'department_name': phonebook_data.get_department_name(department),
-        'organization': organization,
+        'dep_org_info': phonebook_data.get_derp_org_info(organization, department),
         'pages_count': phonebook_data.get_pages_count(),
         'search_text': search_text,
     })

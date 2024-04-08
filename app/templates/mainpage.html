@@ -91,8 +91,8 @@
         </select> -->
         <input  type='search' id='search_text' value='{{ search_text }}' class='input-line inputBox' name=search_text
         title='Поиск осуществляется одновременно по всем атрибутам (ФИО, отдел, телефон и тд.). Для сброса результатов поиска - нажмите "Искать" с пустым полем' data-toggle="tooltip" data-bs-placement="top">
-        <input type="hidden" name="department" value="{{ department }}">
-        <input type="hidden" name="organization" value="{{ organization }}">
+        <input type="hidden" name="department" value="{{ dep_org_info['department']['ID'] }}">
+      <input type="hidden" name="organization" value="{{ dep_org_info['organization']['ID'] }}">
         <input id='search' class='btn btn-primary' type='submit' value='Искать'>
         <span class="newText"></span>
         <!-- Копирование емаил адресов  -->
@@ -139,15 +139,15 @@
         <div class="col-sm-9 col-wrapper">
           <div class='items_table'>
             <table class='table table-bordered table-hover'>
-              {% if department_employees and department and organization %}
+              {% if dep_org_info['department']['Name'] and dep_org_info['organization']['Name']%}
               <thead>
-              <th colspan="2">{{ department_employees[0].DepartmentName }}</th>
-              <th colspan="2">{{ department_employees[0].OrganizationName }}</th>
+                <th colspan="2">{{ dep_org_info['department']['Name'] }}</th>
+                <th colspan="2">{{ dep_org_info['organization']['Name'] }}</th>
               </thead>
               {% else %}
-              {% if department_employees and organization %}
+              {% if dep_org_info['organization']['Name'] %}
               <thead>
-              <th colspan="4" style="text-align: right">{{ department_employees[0].OrganizationName }}</th>
+                <th colspan="4" style="text-align: right">{{ dep_org_info['organization']['Name'] }}</th>
               </thead>
               {% else %}
               {% endif %}
@@ -372,7 +372,7 @@
                 </span>
                 {% else %}
                 <span class="page_number">
-                  <a href="?page={{ page }}&search_text={{ search_text }}&search_filter={{ search_filter }}&department={{ department }}" style="text-decoration: none; color: #3AB5F9">{{ page }}</a>
+                  <a href="?page={{ page }}&search_text={{ search_text }}&search_filter={{ search_filter }}&department={{ dep_org_info['department']['ID'] }}&organization={{ dep_org_info['organization']['ID'] }}" style="text-decoration: none; color: #3AB5F9">{{ page }}</a>
                 </span>
                 {% endif %}
               {% endfor %}
