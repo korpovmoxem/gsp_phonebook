@@ -139,18 +139,25 @@
         <div class="col-sm-9 col-wrapper">
           <div class='items_table'>
             <table class='table table-bordered table-hover'>
-              {% if dep_org_info['department']['Name'] and dep_org_info['organization']['Name']%}
+              {% if department_employees and dep_org_info['department']['Name']%}
               <thead>
-                <th colspan="2">{{ dep_org_info['department']['Name'] }}</th>
-                <th colspan="2">{{ dep_org_info['organization']['Name'] }}</th>
+                <th colspan="2" class='dep_org_names'>{{ department_employees[0]['DepartmentName'] }}</th>
+                <th colspan="2" class='dep_org_names' style="text-align: right">{{ department_employees[0]['OrganizationName'] }}</th>
               </thead>
               {% else %}
-              {% if dep_org_info['organization']['Name'] %}
-              <thead>
-                <th colspan="4" style="text-align: right">{{ dep_org_info['organization']['Name'] }}</th>
-              </thead>
-              {% else %}
-              {% endif %}
+                {% if dep_org_info['department']['Name'] and dep_org_info['organization']['Name']%}
+                <thead>
+                <th colspan="2" class='dep_org_names'>{{ dep_org_info['department']['Name'] }}</th>
+                  <th colspan="2" class='dep_org_names' style="text-align: right">{{ dep_org_info['organization']['Name'] }}</th>
+                </thead>
+                {% else %}
+                  {% if dep_org_info['organization']['Name'] %}
+                  <thead>
+                    <th colspan="4" style="text-align: right" class='dep_org_names'>{{ dep_org_info['organization']['Name'] }}</th>
+                  </thead>
+                  {% else %}
+                  {% endif %}
+                {% endif %}
               {% endif %}
               <thead>
             <tr>
@@ -330,7 +337,7 @@
                     </div>
                     {% for boss in item.OrgStructure %}
                     <div class='col-sm-10' style='text-align: left;'>
-                      <div class=name_org style='font-size: 14px; font-weight: bold;'>{{boss.FullNameRus}}</div>
+                      <div class=name_org style='font-size: 14px; font-weight: bold;'><a href="#" data-bs-toggle="modal_{{ boss.ID }}">{{boss.FullNameRus}}</a></div>
                       <div class=department_org style='font-size: 12px; font-weight: bold;'><a class="department" href='?department={{ boss.DepartmentID }}&organization={{ item.OrganizationID }}'>{{ boss.DepartmentName }}</a></div>
                       <div class=job_title_org style='font-size: 12px; margin-bottom: 10px'>{{boss.PositionTitle}}</div>
                     </div>
