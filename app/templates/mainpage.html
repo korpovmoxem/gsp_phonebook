@@ -140,17 +140,24 @@
         <div class="col-sm-9 col-wrapper">
           <div class='items_table'>
             <table class='table table-bordered table-hover'>
-              {% if dep_org_info['department']['Name'] and dep_org_info['organization']['Name']%}
+              {% if department_employees %}
               <thead>
+                <th colspan="2">{{ department_employees[0]['DepartmentName'] }}</th>
+                <th colspan="2">{{ department_employees[0]['OrganizationName'] }}</th>
+              </thead>
+              {% else %}
+               {% if department_employees %}
+                <thead>
                 <th colspan="2">{{ dep_org_info['department']['Name'] }}</th>
                 <th colspan="2">{{ dep_org_info['organization']['Name'] }}</th>
-              </thead>
-              {% else %}
-              {% if dep_org_info['organization']['Name'] %}
-              <thead>
-                <th colspan="4" style="text-align: right">{{ dep_org_info['organization']['Name'] }}</th>
-              </thead>
-              {% else %}
+                </thead>
+                {% else %}
+                  {% if dep_org_info['organization']['Name'] %}
+                  <thead>
+                    <th colspan="4" style="text-align: right">{{ dep_org_info['organization']['Name'] }}</th>
+                  </thead>
+                  {% else %}
+                  {% endif %}
               {% endif %}
               {% endif %}
               <thead>
