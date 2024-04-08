@@ -1039,3 +1039,9 @@ th {
 .table_job_title {
   width: 500px;
 }
+
+.table_prefix,
+.table_phone_code {
+  text-align: center;
+  width: 20px;
+}
