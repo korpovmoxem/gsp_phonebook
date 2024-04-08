@@ -186,8 +186,32 @@ class DataBaseStorage(SearchEngine):
                 )
             self.organization_tree.append(child_tree)
 
-    def get_orgsctructure_name(self, department_id: str, organization_id: int) -> dict:
-        return list(filter(lambda x: x['ID'] == department_id, self.departments and x['OrganizationID'] == organization_id))[0]['Name']
+    def get_derp_org_info(self, organization: int, department: str) -> dict:
+        """
+        Получение имени копании и департамента
+        :param organization: ID (ИНН) организации
+        :param department: ID департамента
+        :return: dict с ID и NAME организации и департамента
+        """
+        dep_org_info = {
+            'department': {
+                'ID': str(),
+                'Name': str(),
+            },
+            'organization': {
+                'ID': int(),
+                'Name': str()
+            }
+        }
+        if organization:
+            organization_info = list(filter(lambda org: org['ID'] == organization, self.organizations))[0]
+            dep_org_info['organization']['ID'] = organization_info['ID']
+            dep_org_info['organization']['Name'] = organization_info['Name']
+        if department:
+            department_info = list(filter(lambda dep: dep['ID'] == department, self.departments))[0]
+            dep_org_info['department']['ID'] = department_info['ID']
+            dep_org_info['department']['Name'] = department_info['Name']
+        return dep_org_info
 
 
 if __name__ == '__main__':
