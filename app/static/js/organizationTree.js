@@ -10,10 +10,19 @@ async function getOrganization() {
 }
 getOrganization();
 
+// function renderOrganization(jsonData) {
+//   const menuContainer = document.querySelector(".menu__list");
+//   jsonData.forEach((item) => {
+//     const menuItems = createMenuItems(item.Name, item.Children);
+//     menuContainer.insertAdjacentHTML("beforeend", menuItems);
+//   });
+
+//   applySavedMenuState();
+// }
 function renderOrganization(jsonData) {
   const menuContainer = document.querySelector(".menu__list");
   jsonData.forEach((item) => {
-    const menuItems = createMenuItems(item.Name, item.Children);
+    const menuItems = createMenuItems(item.Name, item.Children, item.Inn);
     menuContainer.insertAdjacentHTML("beforeend", menuItems);
   });
 
@@ -57,10 +66,25 @@ document.querySelectorAll(".menu__item").forEach((item) => {
   });
 });
 // КОД-------------------------------
-function createMenuItems(name, children) {
-  console.log(children);
+// function createMenuItems(name, children) {
+//   let html = `<li class="myMainClass">
+//       <span class="menu__items"><a href="">${name}</a></span>
+//       <ul class="menu__item">`;
+//   children.forEach((value) => {
+//     const hasChildren =
+//       Array.isArray(value.Children) && value.Children.length > 0;
+//     html += createMenuItem(hasChildren, value);
+//   });
+
+//   html += `</ul>
+//   </li>`;
+
+//   return html;
+// }
+function createMenuItems(name, children, Inn) {
+  console.log(Inn);
   let html = `<li class="myMainClass">
-      <span class="menu__items"><a href="">${name}</a></span>
+      <span class="menu__items"><a href="/organizations/${Inn}">${name}</a></span>
       <ul class="menu__item">`;
   children.forEach((value) => {
     const hasChildren =
