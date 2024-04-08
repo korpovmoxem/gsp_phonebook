@@ -337,7 +337,7 @@
                     </div>
                     {% for boss in item.OrgStructure %}
                     <div class='col-sm-10' style='text-align: left;'>
-                      <div class=name_org style='font-size: 14px; font-weight: bold;'><a href="#" data-bs-toggle="modal_{{ boss.ID }}">{{boss.FullNameRus}}</a></div>
+                      <div class=name_org style='font-size: 14px; font-weight: bold;'>{{boss.FullNameRus}}</div>
                       <div class=department_org style='font-size: 12px; font-weight: bold;'><a class="department" href='?department={{ boss.DepartmentID }}&organization={{ item.OrganizationID }}'>{{ boss.DepartmentName }}</a></div>
                       <div class=job_title_org style='font-size: 12px; margin-bottom: 10px'>{{boss.PositionTitle}}</div>
                     </div>
