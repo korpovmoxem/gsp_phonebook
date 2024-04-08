@@ -58,8 +58,9 @@ document.querySelectorAll(".menu__item").forEach((item) => {
 });
 // КОД-------------------------------
 function createMenuItems(name, children) {
+  console.log(children);
   let html = `<li class="myMainClass">
-      <span class="menu__items">${name}</span>
+      <span class="menu__items"><a href="">${name}</a></span>
       <ul class="menu__item">`;
   children.forEach((value) => {
     const hasChildren =

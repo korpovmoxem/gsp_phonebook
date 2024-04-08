@@ -790,12 +790,20 @@ th {
 }
 
 /* Медиа запросы */
-@media (max-width: 1604px) {
+@media (max-width: 1720px) {
   .col-wrapper {
-    width: 800px;
+    max-width: 1250px;
+  }
+}
+@media (max-width: 1624px) {
+  .col-wrapper {
+    max-width: 1200px;
   }
 }
 @media (max-width: 1604px) {
+  .col-wrapper {
+    max-width: 1050px;
+  }
   .nav {
     padding-top: 60px;
   }
@@ -823,7 +831,10 @@ th {
   }
 }
 
-@media (max-width: 1360px) {
+@media (max-width: 1368px) {
+  .col-wrapper {
+    max-width: 900px;
+  }
   .search_args {
     margin-bottom: 80px;
   }
@@ -841,6 +852,9 @@ th {
 }
 
 @media (max-width: 1200px) {
+  .col-wrapper {
+    max-width: 800px;
+  }
   .banner__content {
     padding-bottom: 20px;
   }
@@ -893,6 +907,9 @@ th {
 }
 
 @media (max-width: 1100px) {
+  .col-wrapper {
+    max-width: 700px;
+  }
   .content {
     font-size: 14px;
   }
@@ -997,5 +1014,14 @@ th {
 }
 
 .col-wrapper {
-  width: 1300px;
+  width: 1320px;
+}
+
+.clear_search {
+  margin-top: -30px;
+  margin-bottom: 30px;
+}
+.clear_search_button {
+  width: 150px;
+  height: 40px;
 }
