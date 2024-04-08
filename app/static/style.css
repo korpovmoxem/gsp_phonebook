@@ -56,6 +56,10 @@ body {
   color: var(--text-color);
 }
 
+.hidden {
+  display: none;
+}
+
 /* Расширение сайта и отступы */
 .container {
   max-width: 1900px;
@@ -94,6 +98,36 @@ body {
 .dark-mode-btn__icon {
   position: relative;
   z-index: 9;
+}
+
+/* Кнопка для входа в админку */
+.admin_entry {
+  position: absolute;
+  top: 12px;
+  right: 24px;
+}
+
+.button-open {
+  width: 33px;
+  height: 33px;
+  border-radius: 5px;
+  border: 2px solid #fff;
+  transition: all 0.1s ease;
+  padding: 2px;
+}
+
+.button-open-now {
+  background: transparent;
+  border: #fff;
+  border-radius: 5px;
+  transition: all 0.1s ease;
+}
+.button-open-now:hover {
+  background: #3aabf1;
+}
+
+.button-open-now:active {
+  background: #1f82c0;
 }
 
 /* Стили для курсора и стили для кода в js */
@@ -356,7 +390,7 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 .dep_org_names {
-  font-size: 16px
+  font-size: 16px;
 }
 
 .newText {
@@ -462,6 +496,18 @@ input[type="search"]::-webkit-search-cancel-button {
   --bs-btn-hover-border-color: #3ab5f9;
 }
 
+/* Кнопка сбросить поиск */
+
+.clear_search {
+  margin-top: -30px;
+  margin-bottom: 30px;
+}
+
+.clear_search_button {
+  width: 150px;
+  height: 38px;
+}
+
 /* Стили для перестроения таблицы и списка */
 .col-sm-4 {
   flex: 0 0 auto;
@@ -470,6 +516,7 @@ input[type="search"]::-webkit-search-cancel-button {
 
 /* Кнопка которая сворачиват список с компаниями */
 .btn-menu {
+  height: 38px;
   cursor: pointer;
   color: white;
   border: none;
@@ -481,7 +528,7 @@ input[type="search"]::-webkit-search-cancel-button {
   letter-spacing: 1px;
 }
 .btn-menu:hover {
-  background-color: #03426b;
+  background-color: #3ab5f9;
 }
 .btn-menu:active {
   transform: translateY(0.2rem);
@@ -587,6 +634,20 @@ th {
   justify-content: center;
   flex-direction: column;
   margin: 30px;
+}
+
+.col-wrapper {
+  width: 1320px;
+}
+
+.table_job_title {
+  width: 500px;
+}
+
+.table_prefix,
+.table_phone_code {
+  text-align: center;
+  width: 20px;
 }
 /* Карточка пользователя внутри таблица */
 .email__adress {
@@ -944,108 +1005,4 @@ th {
   .follow-cursor {
     display: none;
   }
-}
-
-/* Стили для скрипта Сидельникова */
-
-.sid {
-  --page-bg: #ffc0cb;
-  --text-color: #000;
-}
-
-.sid .banner svg > g > use:nth-child(3) {
-  fill: #ffc0cb;
-}
-
-.sid .table {
-  --bs-table-bg: #ffc0cb;
-}
-
-.sid .modal-content {
-  background-color: #ffc0cb;
-  --bs-table-bg: #dbdfd1;
-  --bs-table-color: #dbdfd1;
-}
-
-.btn__toggle {
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  gap: 5px;
-  width: 50px;
-  padding-left: 0px;
-  padding-bottom: 10px;
-}
-
-.on {
-  background-color: #171718;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  height: 30px;
-  width: 30px;
-}
-
-.of {
-  background-color: #171718;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  height: 30px;
-  width: 30px;
-}
-.hidden {
-  display: none;
-}
-
-.admin_entry {
-  position: absolute;
-  top: 12px;
-  right: 24px;
-}
-
-.button-open {
-  width: 33px;
-  height: 33px;
-  border-radius: 5px;
-  border: 2px solid #fff;
-  transition: all 0.1s ease;
-  padding: 2px;
-}
-
-.button-open-now {
-  background: transparent;
-  border: #fff;
-  border-radius: 5px;
-  transition: all 0.1s ease;
-}
-.button-open-now:hover {
-  background: #3aabf1;
-}
-
-.button-open-now:active {
-  background: #1f82c0;
-}
-
-.col-wrapper {
-  width: 1320px;
-}
-
-.clear_search {
-  margin-top: -30px;
-  margin-bottom: 30px;
-}
-.clear_search_button {
-  width: 150px;
-  height: 40px;
-}
-
-.table_job_title {
-  width: 500px;
-}
-
-.table_prefix,
-.table_phone_code {
-  text-align: center;
-  width: 20px;
 }
