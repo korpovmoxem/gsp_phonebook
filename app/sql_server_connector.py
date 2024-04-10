@@ -25,8 +25,12 @@ class SqlServerConnector:
             f'Trusted_Connection=No;'
             f'Database={sql_server_config["Database"]};'
         )
-        self.db_name = f'{sql_server_config["Database"]}.dbo'
+        self.__db_name = f'{sql_server_config["Database"]}.dbo'
         self.__cursor = self.__sql_connector.cursor()
+
+    @property
+    def db_name(self) -> str:
+        return self.__db_name
 
     def __execute_query(self, query: str) -> list | None:
         """
@@ -43,7 +47,6 @@ class SqlServerConnector:
     def __get_column_names(self):
         """
         Получает наименования колонок в таблице БД, к которой последний раз отправлялся запрос
-        :return:
         """
         return [i[0] for i in self.__cursor.description]
 
@@ -65,12 +68,18 @@ class SqlServerConnector:
         :param data: Словарь, в котором ключ - название атрибута таблицы в БД, значение - новое значение атрибута
         :return:
         """
-        for key, value in data.items():
-            if 'Hide' in key:
-                query = f"UPDATE HidedEmployees SET {key[4:]} = {value}"
-            else:
-                query = f"UPDATE EditedEmployees SET {key} = {value}"
-            self.__execute_query(query)
+        table_name = 'EditedEmployees'
+        query = f"SELECT ID FROM {self.__db_name}.{table_name} WHERE ID = '{data['ID']}'"
+        entry = self.__execute_query(query)
+        data = dict(filter(lambda x: x[1], data.items()))
+        data = dict(map(lambda x: (f"{x[0]}", f"'{x[1].replace('on', '1').replace('off', '0')}'"), data.items()))
+        if entry:
+            employee_id = data.pop('ID')
+            query = f"UPDATE {self.__db_name}.{table_name} SET {','.join([f'{i[0]}={i[1]}' for i in data.items()])} WHERE ID = {employee_id}"
+        else:
+            query = f"INSERT INTO {self.__db_name}.{table_name} ({','.join(data.keys())}) VALUES ({','.join(data.values())})"
+        print(query)
+        self.__execute_query(query)
 
 
 class DataBaseStorage(SearchEngine):
@@ -134,38 +143,46 @@ class DataBaseStorage(SearchEngine):
         self.employees = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.employees")
         self.departments = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.departments")
         self.organizations = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.organizations")
+        self.edited_data = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.EditedEmployees")
 
-        try:
-            with open('employees.json', 'r') as file:
-                self.employees = json.load(file)
-        except FileNotFoundError:
+        for row in self.employees:
+
             # Дополнение массива названием департамента и компании
-            for row in self.employees:
-                row['OrgStructure'] = list()
-                row['insert_date'] = row['insert_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['insert_date'], datetime) else row['insert_date']
-                row['update_date'] = row['update_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['update_date'], datetime) else row['update_date']
-                row['OrganizationName'] = list(filter(lambda org: org['ID'] == row['OrganizationID'], self.organizations))[0]['Name']
-                department = list(filter(lambda dep: dep['ID'] == row['DepartmentID'] and dep['OrganizationID'] == row['OrganizationID'], self.departments))
-                if department:
-                    row['DepartmentName'] = department[0]['Name']
-                    row['BossID'] = department[0]['BossID']
-                    row['ParentID'] = department[0]['ParentID']
+            row['OrgStructure'] = list()
+            row['insert_date'] = row['insert_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['insert_date'], datetime) else row['insert_date']
+            row['update_date'] = row['update_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['update_date'], datetime) else row['update_date']
+            row['OrganizationName'] = list(filter(lambda org: org['ID'] == row['OrganizationID'], self.organizations))[0]['Name']
+            department = list(filter(lambda dep: dep['ID'] == row['DepartmentID'] and dep['OrganizationID'] == row['OrganizationID'], self.departments))
+            if department:
+                row['DepartmentName'] = department[0]['Name']
+                row['BossID'] = department[0]['BossID']
+                row['ParentID'] = department[0]['ParentID']
 
-                else:
-                    row['DepartmentName'] = ''
-                    row['BossID'] = ''
-                    row['ParentID'] = ''
+            else:
+                row['DepartmentName'] = ''
+                row['BossID'] = ''
+                row['ParentID'] = ''
 
-            # Формирование оргструктуры сотрудника
-            for row in self.employees:
-                if row['DepartmentName']:
-                    row['OrgStructure'] += self.__fill_organizational_structure(row, self.employees, self.departments)
+            # Сокрытие данных и замена редактированными
+            employee_edited_data = list(
+                filter(lambda x: x['ID'] == row['ID'], list(filter(lambda y: 'ID' in y, self.edited_data))))
+            if employee_edited_data:
+                employee_edited_data[0].pop('ID')
+                for key, value in sorted(employee_edited_data[0].items(), key=lambda x: 'Hide' not in str(x[1])):
+                    if value is True and 'Hide' in key:
+                        value = ''
+                    elif value is False and 'Hide' in key:
+                        continue
+                    key = key.replace('Hide', '')
+                    row[key] = value
 
-            with open('employees.json', 'w') as file:
-                json.dump(self.employees, file, ensure_ascii=False, indent=4)
+        # Формирование оргструктуры сотрудника
+        for row in self.employees:
+            if row['DepartmentName']:
+                row['OrgStructure'] += self.__fill_organizational_structure(row, self.employees, self.departments)
 
         # Формирование древовидной структуры департаментов
-        self.organization_tree = list()
+        self.__organization_tree = list()
         for organization in list(sorted(self.organizations, key=lambda org: org['Order'])):
             child_tree = {
                 'ID': organization['ID'],
@@ -184,11 +201,11 @@ class DataBaseStorage(SearchEngine):
                         'Children': self.__fill_department_children(department, self.departments),
                     }
                 )
-            self.organization_tree.append(child_tree)
+            self.__organization_tree.append(child_tree)
 
-    def get_derp_org_info(self, organization: int, department: str) -> dict:
+    def get_dep_org_info(self, organization: int, department: str) -> dict:
         """
-        Получение имени копании и департамента
+        Получение имени компании и департамента
         :param organization: ID (ИНН) организации
         :param department: ID департамента
         :return: dict с ID и NAME организации и департамента
@@ -212,6 +229,10 @@ class DataBaseStorage(SearchEngine):
             dep_org_info['department']['ID'] = department_info['ID']
             dep_org_info['department']['Name'] = department_info['Name']
         return dep_org_info
+
+    @property
+    def organization_tree(self) -> list:
+        return self.__organization_tree
 
 
 if __name__ == '__main__':

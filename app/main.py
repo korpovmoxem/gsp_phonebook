@@ -22,14 +22,18 @@ phonebook_data = DataBaseStorage()
 print(datetime.now() - start_time)
 
 
+def load_phonebook_data():
+    global phonebook_data
+    phonebook_data = DataBaseStorage()
+
+
 @app.get('/')
 def main_route(request: Request, search_text: str = '', department: str = '', organization: int = 0, page: int = 0):
-    print(phonebook_data.get_derp_org_info(organization, department))
     return templates.TemplateResponse('mainpage.html', {
         'request': request,
         'items': phonebook_data.search(search_text, department, organization, page=page),
         'page': page,
-        'dep_org_info': phonebook_data.get_derp_org_info(organization, department),
+        'dep_org_info': phonebook_data.get_dep_org_info(organization, department),
         'pages_count': phonebook_data.get_pages_count(),
         'search_text': search_text,
     })
@@ -84,7 +88,7 @@ def admin_page(
         token: str | None = Cookie(default=None),
         employee_id: str | None = None,
         confirmation_text: bool = False,
-        HidePhotoID: str | None = None,
+        edited_data: dict | None = None,
 ):
     if not token:
         return RedirectResponse('/login')
@@ -149,4 +153,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+    uvicorn.run(app, host='172.16.153.102', port=8000)
