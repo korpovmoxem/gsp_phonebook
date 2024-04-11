@@ -3,12 +3,12 @@ from typing import Annotated
 from datetime import datetime
 
 import uvicorn
-from fastapi import FastAPI, Request, HTTPException, status, Form, Response, Cookie
+from fastapi import FastAPI, Request, HTTPException, status, Form, Cookie
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 
-from sql_server_connector import DataBaseStorage, SqlServerConnector
+from sql_server_connector import DataBaseStorage
 from authentication import ActiveDirectoryConnection, CookieUserName
 
 
@@ -105,7 +105,6 @@ def admin_page(
         employee_info = list(filter(lambda employee: employee['ID'] == employee_id, phonebook_data.employees))
         if employee_info:
             employee_info = employee_info[0]
-            print(employee_info)
 
     return templates.TemplateResponse(f'{user_info["group"]}.html', {
         'request': request,

@@ -1,4 +1,3 @@
-
 from datetime import datetime
 
 import pyodbc
@@ -87,7 +86,6 @@ class SqlServerConnector:
         else:
             query = f"INSERT INTO {self.__db_name}.{table_name} ({','.join(data.keys())}) VALUES ({','.join(data.values())})"
 
-        print(query)
         self.__execute_query(query)
         return data
 
@@ -177,12 +175,10 @@ class DataBaseStorage(SearchEngine):
             employee_edited_data = list(filter(lambda x: x['ID'] == row['ID'], list(filter(lambda y: 'ID' in y, self.edited_data))))
             if employee_edited_data:
                 employee_edited_data[0].pop('ID')
-                print(employee_edited_data)
                 for key, value in employee_edited_data[0].items():
                     if isinstance(value, str):
                         value = value.strip("'") if value != 'NULL' else ''
                     row[key] = value
-                print(row)
             else:
                 for key in self.edited_data[0].keys():
                     if key not in row:
@@ -260,7 +256,3 @@ class DataBaseStorage(SearchEngine):
     @property
     def organization_tree(self) -> list:
         return self.__organization_tree
-
-
-if __name__ == '__main__':
-    test = DataBaseStorage()
