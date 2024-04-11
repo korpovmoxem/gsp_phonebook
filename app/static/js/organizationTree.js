@@ -82,7 +82,6 @@ document.querySelectorAll(".menu__item").forEach((item) => {
 //   return html;
 // }
 function createMenuItems(name, children, Inn) {
-  console.log(Inn);
   let html = `<li class="myMainClass">
       <span class="menu__items"><a href="/?organization=${Inn}">${name}</a></span>
       <ul class="menu__item">`;
