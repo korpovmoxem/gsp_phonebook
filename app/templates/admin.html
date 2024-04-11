@@ -89,7 +89,11 @@
                     <th><input type="text" class="form-control form-disabled" placeholder="Email" value="{{ employee_info.Email }}" readonly='readonly' disabled></th>
                     <th>
                         <div class="form-check form-switch form-check-reverse">
+                            {% if employee_info['HideEmail'] == 1 %}
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" name='HideEmail' checked>
+                            {% else %}
                             <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HideEmail'>
+                            {% endif %}
                             <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
                         </div>
                     </th>
@@ -100,7 +104,11 @@
                     <th><input type="text" class="form-control form-disabled" placeholder="Телефон" value="{{ employee_info.TelephoneNumberCorp }}" readonly='readonly' disabled></th>
                     <th>
                         <div class="form-check form-switch form-check-reverse">
+                            {% if employee_info['HideTelephoneNumberCorp'] == 1 %}
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" name='HideTelephoneNumberCorp' checked>
+                            {% else %}
                             <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HideTelephoneNumberCorp'>
+                            {% endif %}
                             <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
                         </div>
                     </th>
@@ -111,7 +119,11 @@
                     <th><input type="text" class="form-control form-disabled" placeholder="Мобильный" value="{{ employee_info.MobileNumberCorp }}" readonly='readonly' disabled></th>
                     <th>
                         <div class="form-check form-switch form-check-reverse">
+                            {% if employee_info['HideMobileNumberCorp'] == 1 %}
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" name='HideMobileNumberCorp' checked>
+                            {% else %}
                             <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HideMobileNumberCorp'>
+                            {% endif %}
                             <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
                         </div>
                     </th>
@@ -122,7 +134,11 @@
                     <th><input type="text" class="form-control form-disabled" placeholder="Внешний телефон" value="{{ employee_info.ExtNumID }}" readonly='readonly' disabled></th>
                     <th>
                         <div class="form-check form-switch form-check-reverse">
+                            {% if employee_info['HideExtNumID'] == 1 %}
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" name='HideExtNumID' checked>
+                            {% else %}
                             <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HideExtNumID'>
+                            {% endif %}
                             <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
                         </div>
                     </th>
@@ -133,7 +149,11 @@
                     <th><input type="text" class="form-control form-edit" placeholder="Рабочее место" value="{{ employee_info.WorkPlace }}" name="WorkPlace"></th>
                     <th>
                         <div class="form-check form-switch form-check-reverse">
+                            {% if employee_info['HideWorkPlace'] == 1 %}
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" name='HideWorkPlace' checked>
+                            {% else %}
                             <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HideWorkPlace'>
+                            {% endif %}
                             <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
                         </div>
                     </th>
@@ -144,7 +164,11 @@
                     <th><input type="text" class="form-control form-disabled" placeholder="Фото" value="{{ employee_info.PhotoID }}" readonly='readonly' disabled></th>
                     <th>
                         <div class="form-check form-switch form-check-reverse">
+                            {% if employee_info['HidePhotoID'] == 1 %}
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" name='HidePhotoID' checked>
+                            {% else %}
                             <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HidePhotoID'>
+                            {% endif %}
                             <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
                         </div>
                     </th>
@@ -170,7 +194,11 @@
                     <th><input type="text" class="form-control form-edit" placeholder="Адрес" value="{{ employee_info.Address }}" name=Address></th>
                     <th>
                         <div class="form-check form-switch form-check-reverse">
+                            {% if employee_info['HideAddress'] == 1 %}
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" name='HideAddress' checked>
+                            {% else %}
                             <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HideAddress'>
+                            {% endif %}
                             <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
                         </div>
                     </th>

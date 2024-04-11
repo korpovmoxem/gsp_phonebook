@@ -180,8 +180,8 @@
                 </div>
                 </TD>
                 <TD class='table_job_title'>{{item.PositionTitle}}</TD>
-                <TD class='table_prefix'>{{item.TelephoneNumberCorp[:2]}}</TD>
-                <TD class='table_phone_code'>{{item.TelephoneNumberCorp[2:]}}</TD>
+                <TD class='table_prefix'>{{item.TelephoneNumberCorp[:2] if item.HideTelephoneNumberCorp == 0 else ''}}</TD>
+                <TD class='table_phone_code'>{{item.TelephoneNumberCorp[2:] if item.HideTelephoneNumberCorp == 0 else ''}}</TD>
               </TR>
               
             <!-- Модальное окно -->
@@ -246,7 +246,7 @@
                     </div>
                     <div class='col'>
                       <div class='prefix_value' style="text-align: right; font-size: 13px;">
-                        {{item.TelephoneNumberCorp[:2]}}
+                        {{'' if item.HideTelephoneNumberCorp == True else item.TelephoneNumberCorp[:2]}}
                       </div>
                     </div>
                   </div>
@@ -259,7 +259,7 @@
                     </div>
                     <div class='col'>
                         <div class='phone_value' style="text-align: right; font-size: 13px;">
-                          {{item.TelephoneNumberCorp[2:]}}
+                        {{'' if item.HideTelephoneNumberCorp == True else item.TelephoneNumberCorp[2:]}}
                       </div>
                     </div>
                   </div>
@@ -272,7 +272,7 @@
                     </div>
                     <div class='col'>
                         <div class='phone_code_value' style="text-align: right; font-size: 13px;">
-                          {{item.ExtNumID}}
+                        {{'' if item.HideExtNumID == True else item.ExtNumID}}
                       </div>
                     </div>
                   </div>
@@ -285,7 +285,7 @@
                     </div>
                     <div class='col'>
                         <div class='mobile_value' style="text-align: right; font-size: 13px;">
-                          {{item.MobileNumberCorp}}
+                        {{'' if item.HideMobileNumberCorp == True else item.MobileNumberCorp}}
                       </div>
                     </div>
                   </div>
@@ -298,7 +298,7 @@
                     </div>
                     <div class='col'>
                         <div id='email_value' style="text-align: right; font-size: 13px; color:#0199ff;">
-                          <a class="email__adress" href="mailto:{{item.Email}}">{{item.Email}}</a>
+                          <a class="email__adress" href="mailto:{{item.Email}}">{{'' if item.HideEmail == True else item.Email}}</a>
                       </div>
                     </div>
                   </div>
@@ -311,7 +311,7 @@
                     </div>
                     <div class='col'>
                         <div id='workplace_value' style="text-align: right; font-size: 13px;">
-                          {{item.WorkPlace}}
+                        {{'' if item.HideWorkPlace == True else item.WorkPlace}}
                       </div>
                     </div>
                   </div>
@@ -324,7 +324,7 @@
                     </div>
                     <div class='col'>
                         <div id='address_value' style="text-align: right; font-size: 13px;">
-                          {{item.Address}}
+                        {{'' if item.HideAddress == True else item.Address}}
                       </div>
                     </div>
                   </div>

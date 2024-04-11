@@ -1,4 +1,4 @@
-import json
+
 from datetime import datetime
 
 import pyodbc
@@ -27,6 +27,7 @@ class SqlServerConnector:
         )
         self.__db_name = f'{sql_server_config["Database"]}.dbo'
         self.__cursor = self.__sql_connector.cursor()
+        self.__table_fields = dict()
 
     @property
     def db_name(self) -> str:
@@ -44,7 +45,7 @@ class SqlServerConnector:
         self.__cursor.execute(query)
         self.__sql_connector.commit()
 
-    def __get_column_names(self):
+    def __get_column_names(self) -> list:
         """
         Получает наименования колонок в таблице БД, к которой последний раз отправлялся запрос
         """
@@ -62,24 +63,33 @@ class SqlServerConnector:
         data_fields = self.__get_column_names()
         return list(map(lambda x: dict(zip(data_fields, x)), raw_data))
 
-    def update_data(self, data: dict):
+    def update_data(self, data: dict) -> dict:
         """
         Обновляет данные в таблицах, в зависимости от ключа в словаре
         :param data: Словарь, в котором ключ - название атрибута таблицы в БД, значение - новое значение атрибута
-        :return:
+        :return: Преобразованные данные для запроса в БД
         """
         table_name = 'EditedEmployees'
-        query = f"SELECT ID FROM {self.__db_name}.{table_name} WHERE ID = '{data['ID']}'"
+        query = f"SELECT * FROM {self.__db_name}.{table_name} WHERE ID = '{data['ID']}'"
         entry = self.__execute_query(query)
-        data = dict(filter(lambda x: x[1], data.items()))
-        data = dict(map(lambda x: (f"{x[0]}", f"'{x[1].replace('on', '1').replace('off', '0')}'"), data.items()))
+        hide_columns = filter(lambda x: 'Hide' in x, self.__get_column_names())
+        for column in hide_columns:
+            if column in data:
+                data[column] = 1
+            else:
+                data[column] = 0
+
+        data = dict(map(lambda x: (f"[{x[0]}]",f"'{x[1]}'" if x[1] else 'NULL'), data.items()))
+        data = dict(map(lambda x: (x[0], int(x[1].strip("'")) if x[1].strip("'").isdigit() else x[1]), data.items()))
         if entry:
-            employee_id = data.pop('ID')
+            employee_id = data.pop('[ID]')
             query = f"UPDATE {self.__db_name}.{table_name} SET {','.join([f'{i[0]}={i[1]}' for i in data.items()])} WHERE ID = {employee_id}"
         else:
             query = f"INSERT INTO {self.__db_name}.{table_name} ({','.join(data.keys())}) VALUES ({','.join(data.values())})"
+
         print(query)
         self.__execute_query(query)
+        return data
 
 
 class DataBaseStorage(SearchEngine):
@@ -164,17 +174,19 @@ class DataBaseStorage(SearchEngine):
                 row['ParentID'] = ''
 
             # Сокрытие данных и замена редактированными
-            employee_edited_data = list(
-                filter(lambda x: x['ID'] == row['ID'], list(filter(lambda y: 'ID' in y, self.edited_data))))
+            employee_edited_data = list(filter(lambda x: x['ID'] == row['ID'], list(filter(lambda y: 'ID' in y, self.edited_data))))
             if employee_edited_data:
                 employee_edited_data[0].pop('ID')
-                for key, value in sorted(employee_edited_data[0].items(), key=lambda x: 'Hide' not in str(x[1])):
-                    if value is True and 'Hide' in key:
-                        value = ''
-                    elif value is False and 'Hide' in key:
-                        continue
-                    key = key.replace('Hide', '')
+                print(employee_edited_data)
+                for key, value in employee_edited_data[0].items():
+                    if isinstance(value, str):
+                        value = value.strip("'") if value != 'NULL' else ''
                     row[key] = value
+                print(row)
+            else:
+                for key in self.edited_data[0].keys():
+                    if key not in row:
+                        row[key] = 0
 
         # Формирование оргструктуры сотрудника
         for row in self.employees:
@@ -229,6 +241,21 @@ class DataBaseStorage(SearchEngine):
             dep_org_info['department']['ID'] = department_info['ID']
             dep_org_info['department']['Name'] = department_info['Name']
         return dep_org_info
+
+    def update_edited_data(self, data: dict) -> None:
+        """
+        Обновляет запись пользователя в массиве хранилища
+        :param data: ID пользователя
+        """
+        connector = SqlServerConnector()
+        edited_data = connector.update_data(data)
+        employee_data = list(filter(lambda x: x['ID'] == data['ID'], self.employees))[0]
+        employee_data_index = self.employees.index(employee_data)
+        for key, value in edited_data.items():
+            if isinstance(value, str):
+                value = value.strip("'") if value != 'NULL' else ''
+            employee_data[key.replace('[', '').replace(']', '')] = value
+        self.employees[employee_data_index] = employee_data
 
     @property
     def organization_tree(self) -> list:

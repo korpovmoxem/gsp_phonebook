@@ -22,7 +22,8 @@ phonebook_data = DataBaseStorage()
 print(datetime.now() - start_time)
 
 
-def load_phonebook_data():
+@app.get('/update_data')
+async def load_phonebook_data():
     global phonebook_data
     phonebook_data = DataBaseStorage()
 
@@ -88,7 +89,6 @@ def admin_page(
         token: str | None = Cookie(default=None),
         employee_id: str | None = None,
         confirmation_text: bool = False,
-        edited_data: dict | None = None,
 ):
     if not token:
         return RedirectResponse('/login')
@@ -105,6 +105,7 @@ def admin_page(
         employee_info = list(filter(lambda employee: employee['ID'] == employee_id, phonebook_data.employees))
         if employee_info:
             employee_info = employee_info[0]
+            print(employee_info)
 
     return templates.TemplateResponse(f'{user_info["group"]}.html', {
         'request': request,
@@ -137,8 +138,7 @@ async def change_data(
     '''
     Добавить проверку на наличие прав для изменения определенных полей
     '''
-    SqlServerConnector().update_data(post_data)
-
+    phonebook_data.update_edited_data(post_data)
     response = RedirectResponse(f"/{user_info['group']}?employee_id={post_data['ID']}&confirmation_text=True")
     c = CookieUserName(token_data)
     response.set_cookie(key=c.key, value=c.value, max_age=c.max_age)
