@@ -110,7 +110,7 @@ def admin_page(
         'request': request,
         'employee_id': employee_id,
         'employee_info': employee_info,
-        'user_name': user_info['login'],
+        'user_name': user_info['name'],
         'confirmation_text': confirmation_text,
     })
 
@@ -124,9 +124,6 @@ async def change_data(
     if not token:
         return RedirectResponse('/login')
 
-    post_data = await request.form()
-    post_data = dict(post_data)
-
     token_data = CookieUserName.verify_token(token)
     user_info = ActiveDirectoryConnection().authorize_user(token_data)
     if not user_info:
@@ -137,6 +134,10 @@ async def change_data(
     '''
     Добавить проверку на наличие прав для изменения определенных полей
     '''
+    post_data = await request.form()
+    post_data = dict(post_data)
+    post_data['EditedBy'] = user_info['login']
+    post_data['EditedDate'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     phonebook_data.update_edited_data(post_data)
     response = RedirectResponse(f"/{user_info['group']}?employee_id={post_data['ID']}&confirmation_text=True")
     c = CookieUserName(token_data)

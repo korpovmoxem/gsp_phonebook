@@ -60,8 +60,9 @@ class ActiveDirectoryConnection:
             )
             for entry in self.__connection.entries:
                 entry_info = json.loads(entry.entry_to_json())['attributes']
-                if username and re.findall(r'\\(.+)', username)[0] == entry_info['sAMAccountName'][0]:
-                    return {'group': group, 'login': entry_info['cn'][0]}
+                short_login = re.findall(r'\\(.+)', username)
+                if username and short_login[0] == entry_info['sAMAccountName'][0]:
+                    return {'group': group, 'name': entry_info['cn'][0], 'login': short_login[0]}
         return False
 
 

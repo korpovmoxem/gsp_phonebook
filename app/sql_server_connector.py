@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 
 import pyodbc
 import yaml
@@ -153,7 +154,21 @@ class DataBaseStorage(SearchEngine):
         self.organizations = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.organizations")
         self.edited_data = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.EditedEmployees")
 
+        try:
+            with open(f'{os.path.dirname(os.path.realpath(__file__))}/static/content/no_avatar.jpg', 'rb') as file:
+                no_avatar = file.read()
+        except FileNotFoundError:
+            with open(f'{os.path.dirname(os.path.realpath(__file__))}\\static\\content\\no_avatar.jpg', 'rb') as file:
+                no_avatar = file.read()
+
         for row in self.employees:
+
+            # Фото
+            if os.path.isdir("/mnt/phonebook_photo/") and f'{row['FL_ID']}.jpg' in os.listdir('/mnt/phonebook_photo/'):
+                with open(f'/mnt/phonebook_photo/{row['FL_ID']}.jpg', 'rb') as file:
+                    row['Photo'] = file.read()
+            else:
+                row['Photo'] = no_avatar
 
             # Дополнение массива названием департамента и компании
             row['OrgStructure'] = list()
