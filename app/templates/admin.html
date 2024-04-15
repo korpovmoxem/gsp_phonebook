@@ -605,17 +605,6 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      const button = document.getElementById("save_button");
-
-      button.addEventListener("click", function (event) {
-        button.disabled = true;
-        event.preventDefault();
-        setTimeout(function () {
-          button.disabled = false;
-        }, 2000);
-      });
-    </script>
-    <script>
       // Инициализация всплывающего сообщения после полной загрузки DOM
       document.addEventListener("DOMContentLoaded", function () {
         var toastElList = [].slice.call(document.querySelectorAll(".toast"));
