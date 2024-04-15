@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+import base64
 
 import pyodbc
 import yaml
@@ -166,9 +167,10 @@ class DataBaseStorage(SearchEngine):
             # Фото
             if os.path.isdir("/mnt/phonebook_photo/") and f'{row['FL_ID']}.jpg' in os.listdir('/mnt/phonebook_photo/'):
                 with open(f'/mnt/phonebook_photo/{row['FL_ID']}.jpg', 'rb') as file:
-                    row['Photo'] = file.read()
+                    photo = file.read()
             else:
-                row['Photo'] = no_avatar
+                photo = no_avatar
+            row['Photo'] = base64.b64encode(photo).decode("utf-8")
 
             # Дополнение массива названием департамента и компании
             row['OrgStructure'] = list()
