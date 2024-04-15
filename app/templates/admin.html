@@ -577,6 +577,7 @@
       <button type="submit" class="btn btn-primary" id="save_button">
         Сохранить изменения
       </button>
+
       {% else %} {% endif %}
     </form>
 
@@ -598,7 +599,26 @@
         ></button>
       </div>
     </div>
-    <!-- Скрипт Бутстрапа -->
+    <script>
+      const saveButton = document.getElementById("save_button");
+
+      // При нажатии на кнопку, меняем текст на "Сохранение" и сохраняем состояние
+      saveButton.addEventListener("click", async (event) => {
+        saveButton.innerText = "Сохранение..."; // Изменяем текст кнопки на "Сохранение"
+        sessionStorage.setItem("savingState", "true"); // Сохраняем состояние в sessionStorage
+      });
+
+      // Проверяем состояние кнопки при загрузке страницы и восстанавливаем надпись по умолчанию
+      document.addEventListener("DOMContentLoaded", function () {
+        const savingState = sessionStorage.getItem("savingState");
+        if (savingState === "true") {
+          saveButton.innerText = "Сохранить изменения"; // Восстанавливаем текст кнопки на "Сохранение"
+        } else {
+          saveButton.innerText = "Сохранение..."; // Устанавливаем текст кнопки по умолчанию
+        }
+      });
+    </script>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
