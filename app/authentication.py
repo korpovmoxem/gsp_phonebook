@@ -98,4 +98,4 @@ class CookieUserName:
     def __init__(self, username: str):
         self.key = 'token'
         self.value = (Fernet(self.load_cookie_key()).encrypt(bytes(username, 'utf-8'))).decode('utf-8')
-        self.max_age = 1800 # Время жизни cookie в секундах
+        self.max_age = 3600 # Время жизни cookie в секундах
