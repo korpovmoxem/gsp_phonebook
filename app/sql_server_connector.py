@@ -106,8 +106,8 @@ class DataBaseStorage(SearchEngine):
         """
         org_structure = list()
         if employee['ParentID'] != '00000000-0000-0000-0000-000000000000':
-            if employee['ID'] != employee['BossID']:
-                boss_info = list(filter(lambda boss: boss['ID'] == employee['BossID'], employee_list))
+            if employee['ID'] != employee['ManagerID']:
+                boss_info = list(filter(lambda boss: boss['ID'] == employee['ManagerID'], employee_list))
                 if not boss_info:
                     return org_structure
                 else:
@@ -165,8 +165,8 @@ class DataBaseStorage(SearchEngine):
         for row in self.employees:
 
             # Фото
-            if os.path.isdir("/mnt/phonebook_photo/") and f'{row['FL_ID']}.jpg' in os.listdir('/mnt/phonebook_photo/'):
-                with open(f'/mnt/phonebook_photo/{row['FL_ID']}.jpg', 'rb') as file:
+            if os.path.isdir("/mnt/phonebook_photo/") and f"{row['FL_ID']}.jpg" in os.listdir('/mnt/phonebook_photo/'):
+                with open(f"/mnt/phonebook_photo/{row['FL_ID']}.jpg", 'rb') as file:
                     photo = file.read()
             else:
                 photo = no_avatar
@@ -180,12 +180,12 @@ class DataBaseStorage(SearchEngine):
             department = list(filter(lambda dep: dep['ID'] == row['DepartmentID'] and dep['OrganizationID'] == row['OrganizationID'], self.departments))
             if department:
                 row['DepartmentName'] = department[0]['Name']
-                row['BossID'] = department[0]['BossID']
+                row['ManagerID'] = department[0]['ManagerID']
                 row['ParentID'] = department[0]['ParentID']
 
             else:
                 row['DepartmentName'] = ''
-                row['BossID'] = ''
+                row['ManagerID'] = ''
                 row['ParentID'] = ''
 
             # Сокрытие данных и замена редактированными

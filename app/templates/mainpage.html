@@ -142,7 +142,7 @@
             <table class='table table-bordered table-hover'>
               {% if department_employees and dep_org_info['department']['Name'] %}
               <thead>
-                <th colspan="2" class='dep_org_names'>{{ department_employees[0]['DepartmentName'] }}</th>
+                <th colspan="2" class='dep_org_names'>{{ department_employees[0]['org_tree_name'] }}</th>
                 <th colspan="2" class='dep_org_names' style="text-align: right">{{ department_employees[0]['OrganizationName'] }}</th>
               </thead>
               {% else %}

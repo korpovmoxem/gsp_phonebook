@@ -7,7 +7,7 @@ class SearchEngine:
         self.employees = list()
         self.departments = list()
         self.filtered_data = list()
-        self.parent_departments_data = list()
+        self.child_departments_data = list()
 
     def get_pages_count(self) -> list:
         """
@@ -30,6 +30,22 @@ class SearchEngine:
         else:
             return self.filtered_data[int(str(page) + '01'):int(str(page + 1) + '01')]
 
+    def __get_child_department_employees(self, department_id: str, organization_id: int, org_tree_name=None) -> list:
+        """
+        Рекурсивный поиск сотрудников дочерних подразделений
+        """
+        child_employees = list()
+        child_departments = list(filter(lambda x: x['ParentID'] == department_id and x['OrganizationID'] == organization_id, self.departments))
+        department_info = list(filter(lambda x: x['ID'] == department_id and x['OrganizationID'] == organization_id, self.departments))[0]
+        temp = list(filter(lambda x: x['DepartmentID'] == department_id and x['OrganizationID'] == organization_id, self.employees))
+        org_tree_name += (department_info['Name'], )
+        if temp:
+            temp[0]['org_tree_name'] = ' / '.join(org_tree_name[::-1])
+            child_employees.append(temp)
+        for child in child_departments:
+            child_employees += self.__get_child_department_employees(child['ID'], child['OrganizationID'], org_tree_name)
+        return child_employees
+
     def search(self, search_text: str = '', department: str = '', organization: int | str = '', page: int = 0) -> list:
         """
         Поиск по всему массиву
@@ -40,7 +56,7 @@ class SearchEngine:
         :return: Отфильтрованный массив по указанным параметрам
         """
         self.filtered_data = self.employees
-        self.parent_departments_data = list()
+        self.child_departments_data = list()
 
         if organization:
             self.filtered_data = list(filter(lambda item: item['OrganizationID'] == organization, self.filtered_data))
@@ -48,26 +64,26 @@ class SearchEngine:
         if department and department != organization:
             self.filtered_data = list(filter(lambda item: item['DepartmentID'] == department, self.filtered_data))
 
-            # Поиск сотрудников родительских подразделений
-            department_info = list(filter(lambda x: x['ID'] == department, self.departments))[0]
-            while department_info['ParentID'] != '00000000-0000-0000-0000-000000000000':
-                print(department_info['ID'], department_info['ParentID'])
-                department_info = list(filter(lambda x: x['ID'] == department_info['ParentID'] and department_info['OrganizationID'] == x['OrganizationID'], self.departments))
-                if not department_info:
-                    break
-                department_info = department_info[0]
-                employees = list(filter(lambda x: x['OrganizationID'] == department_info['OrganizationID'] and x['DepartmentID'] == department_info['ID'], self.employees))
-                if employees:
-                    self.parent_departments_data.append(employees)
+            # Поиск сотрудников дочерних подразделений
+            child_departments = list(filter(lambda x: x['ParentID'] == department and x['OrganizationID'] == organization, self.departments))
+            department_info = list(filter(lambda x: x['ID'] == department and x['OrganizationID'] == organization, self.departments))[0]
+            for child in child_departments:
+                self.child_departments_data += self.__get_child_department_employees(child['ID'], organization, (department_info['Name'], ))
 
         if search_text:
             temp_data = list()
             for key in self.filtered_data[0].keys():
+                if key == 'org_tree_name':
+                    continue
                 temp_data += list(filter(lambda item: search_text.lower() in str(item[key]).lower() and item not in temp_data, self.filtered_data))
             self.filtered_data = temp_data
 
-        if self.parent_departments_data and self.filtered_data:
-            return [self.filtered_data] + self.parent_departments_data
+        if self.filtered_data:
+            self.filtered_data[0]['org_tree_name'] = self.filtered_data[0]['DepartmentName']
+        if self.child_departments_data and self.filtered_data:
+            return [self.filtered_data] + self.child_departments_data
+        elif self.child_departments_data:
+            return self.child_departments_data
 
         return [self.get_page_data(page)]
 

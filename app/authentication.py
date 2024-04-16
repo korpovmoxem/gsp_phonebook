@@ -99,3 +99,8 @@ class CookieUserName:
         self.key = 'token'
         self.value = (Fernet(self.load_cookie_key()).encrypt(bytes(username, 'utf-8'))).decode('utf-8')
         self.max_age = 1800  # Время жизни cookie в секундах
+
+
+if __name__ == '__main__':
+    CookieUserName.write_cookie_key()
+    print(f'Создан секретный токен cookie')
