@@ -68,6 +68,7 @@
                 <img src="{{ url_for('static', path='/content/winter.svg') }}" alt="cap" class="cap__icon"/>
               </div>
             </label>
+            
           </div>
         </div>
       </div>
@@ -114,10 +115,20 @@
           </svg>
         </div>
     </form>
-
+    
     <form class="clear_search">
       <input class='btn btn-primary clear_search_button' type='submit' value='Сбросить поиск'>
     </form>
+    <button class="btn btn-outline-primary mb-3" id="button" type="button">
+      Открыть блок
+  </button>
+  <div class="card card-body hidden" id="content">
+    Блок с контентом. Lorem ipsum dolor sit amet consectetur adipisicing
+    elit. Distinctio, maiores nulla nesciunt labore optio minus
+    quibusdam excepturi voluptate atque iusto eaque enim, quos
+    consectetur aliquam quasi repellendus vel quis sequi.
+</div>
+  
 
     <!-- Раскрывающийся список филиалов и Таблица с пользователями телефонного справочник  и бутсраповский класс с колонками-->
       <div class="row row-cols-2">
@@ -168,7 +179,6 @@
               <th>Телефон</th>
             </tr>
               </thead>
-            
             {% for item in department_employees %}
               <TR data-bs-toggle="modal" data-bs-target="#modal_{{ item.ID }}"  style="cursor: pointer">
                 <TD class='table_name'>
@@ -183,7 +193,6 @@
                 <TD class='table_prefix'>{{item.TelephoneNumberCorp[:2] if item.HideTelephoneNumberCorp == 0 else ''}}</TD>
                 <TD class='table_phone_code'>{{item.TelephoneNumberCorp[2:] if item.HideTelephoneNumberCorp == 0 else ''}}</TD>
               </TR>
-              
             <!-- Модальное окно -->
             <div class="modal fade" id="modal_{{ item.ID }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -391,6 +400,17 @@
             </div>
           </div>
       </div>
+      <!-- Скрипт для кнопки с инструкцией -->
+      <script>
+        const button = document.querySelector("#button");
+        const content = document.querySelector("#content");
+
+        button.addEventListener("click", function () {
+        if (content.classList.toggle("hidden"))
+        button.textContent = "Открыть блок";
+        else button.textContent = "Закрыть блок";
+        });
+      </script>
     <!-- Скрипт Бутстрапа -->
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
   </body>
