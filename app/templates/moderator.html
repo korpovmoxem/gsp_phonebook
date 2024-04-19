@@ -1,198 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Панель администратора</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-    <link id="favicon" rel="icon" type="image/x-icon" href="{{ url_for('static', path='/content/favicon.ico') }}">
-    <link href="{{ url_for('static', path='/admin.css') }}" rel=stylesheet>
-</head>
-<body>
-    <form class="exit_block" action='/logout'>
-        <button type="submit" class="btn btn-primary" id="exit_button">Выйти</button>
-        <p class="admin_name">{{ user_name }}</p>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      id="favicon"
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', path='/content/favicon.ico') }}"
+    />
+    <link href="{{ url_for('static', path='/admin.css') }}" rel="stylesheet" />
+  </head>
+  <body>
+    <form class="exit_block" action="/logout">
+      <button type="submit" class="btn btn-primary" id="exit_button">
+        Выйти
+      </button>
+      <p class="admin_name">{{ user_name }}</p>
     </form>
-    <div class='page_title'>
-        <p class="text-center">Панель администратора</p>
+    <div class="page_title">
+      <p class="text-center">Панель администратора</p>
     </div>
     <form method="get" id="input_form">
-        <div class="mb-3">
-            <input type="text" class="form-control form-edit" name="employee_id" placeholder="ID сотрудника" value="{{ '' if not employee_id else employee_id }}">
-        </div>
-        <div class="button_block">
-            <button type="submit" class="btn btn-primary" id="submit_button">Найти сотрудника</button>
-            {{ confirmation_text }}
-        </div>
+      <div class="mb-3">
+        <input
+          type="text"
+          class="form-control form-edit"
+          name="employee_id"
+          placeholder="ID сотрудника"
+          value="{{ '' if not employee_id else employee_id }}"
+        />
+      </div>
+      <div class="button_block">
+        <button type="submit" class="btn btn-primary" id="submit_button">
+          Найти сотрудника
+        </button>
+        {{ confirmation_text }}
+      </div>
     </form>
     {% if employee_info %}
     <form class="employee_attrs" method="post" action="/change_data">
-        <input type="hidden" name="ID" value="{{ employee_id }}">
-        <div class="employee_fields">
-            <table class='table table-borderless table-dark'>
-                <tr>
-                    <th>OrganizationID</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Компания" value="{{ employee_info.OrganizationID }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>ID</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="ID" value="{{ employee_info.ID }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>LastNameRus</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Фамилия" value="{{ employee_info.LastNameRus }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>NameRus</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Имя" value="{{ employee_info.NameRus }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>MiddleNameRus</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Отчетсво" value="{{ employee_info.MiddleNameRus }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>FullNameRus</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="ФИО" value="{{ employee_info.FullNameRus }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>DepartmentID</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Департамент" value="{{ employee_info.DepartmentID }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>CategoryID</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Категория" value="{{ employee_info.CategoryID }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>PositionTitle</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Должность" value="{{ employee_info.PositionTitle }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>BranchID</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Отделение" value="{{ employee_info.BranchID }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>Email</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Email" value="{{ employee_info.Email }}" readonly='readonly' disabled></th>
-                    <th>
-                        <div class="form-check form-switch form-check-reverse">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HideEmail'>
-                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
-                        </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>TelephoneNumberCorp</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Телефон" value="{{ employee_info.TelephoneNumberCorp }}" readonly='readonly' disabled></th>
-                    <th>
-                        <div class="form-check form-switch form-check-reverse">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HideTelephoneNumberCorp'>
-                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
-                        </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>MobileNumberCorp</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Мобильный" value="{{ employee_info.MobileNumberCorp }}" readonly='readonly' disabled></th>
-                    <th>
-                        <div class="form-check form-switch form-check-reverse">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HideMobileNumberCorp'>
-                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
-                        </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>ExtNumID</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Внешний телефон" value="{{ employee_info.ExtNumID }}" readonly='readonly' disabled></th>
-                    <th>
-                        <div class="form-check form-switch form-check-reverse">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HideExtNumID'>
-                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
-                        </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>WorkPlace</th>
-                    <th><input type="text" class="form-control form-edit" placeholder="Рабочее место" value="{{ employee_info.WorkPlace }}" name="WorkPlace"></th>
-                    <th>
-                        <div class="form-check form-switch form-check-reverse">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HideWorkPlace'>
-                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
-                        </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>PhotoID</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Фото" value="{{ employee_info.PhotoID }}" readonly='readonly' disabled></th>
-                    <th>
-                        <div class="form-check form-switch form-check-reverse">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HidePhotoID'>
-                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
-                        </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>Order (Employees)</th>
-                    <th><input type="text" class="form-control form-edit" placeholder="Порядок сотрудника" value="{{ employee_info.Order }}" name="Order"></th>
-                </tr>
-                <tr>
-                    <th>Order (Positions)</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Порядок должности" value="{{ employee_info.Order }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>Order (Categories)</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Порядок категории" value="{{ employee_info.Order }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>Address</th>
-                    <th><input type="text" class="form-control form-edit" placeholder="Адрес" value="{{ employee_info.Address }}" name=Address></th>
-                    <th>
-                        <div class="form-check form-switch form-check-reverse">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name='HideAdress'>
-                            <label class="form-check-label" for="flexSwitchCheckDefault">Скрыть</label>
-                        </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>insert_date</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Дата создания" value="{{ employee_info.insert_date }}" readonly='readonly' disabled></th>
-                </tr>
-                <tr>
-                    <th>update_date</th>
-                    <th><input type="text" class="form-control form-disabled" placeholder="Дата обновления" value="{{ employee_info.update_date }}" readonly='readonly' disabled></th>
-                </tr>
-            </table>
-        </div>
-        <button type="submit" class="btn btn-primary" id="save_button">Сохранить изменения</button>
-        {% else %}
-        {% endif %}
+      <input type="hidden" name="ID" value="{{ employee_id }}" />
+      <div class="employee_fields">
+        <table class="table table-borderless table-dark">
+
+          <tr>
+            <th>FullNameRus</th>
+            <th>
+              <input
+                type="text"
+                class="form-control form-disabled"
+                placeholder="ФИО"
+                value="{{ employee_info.FullNameRus }}"
+                readonly="readonly"
+                disabled
+              />
+            </th>
+          </tr>
+
+          <tr>
+            <th>PositionTitle</th>
+            <th>
+              <input
+                type="text"
+                class="form-control form-disabled"
+                placeholder="Должность"
+                value="{{ employee_info.PositionTitle }}"
+                readonly="readonly"
+                disabled
+              />
+            </th>
+          </tr>
+
+          <tr>
+            <th>WorkPlace</th>
+            <th>
+              <input
+                type="text"
+                class="form-control form-edit"
+                placeholder="Рабочее место"
+                value="{{ employee_info.WorkPlace }}"
+                name="WorkPlace"
+              />
+            </th>
+            <th>
+              <div class="form-check form-switch form-check-reverse">
+                {% if employee_info['HideWorkPlace'] == 1 %}
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckChecked"
+                  name="HideWorkPlace"
+                  checked
+                />
+                {% else %}
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDefault"
+                  name="HideWorkPlace"
+                />
+                {% endif %}
+                <label class="form-check-label" for="flexSwitchCheckDefault"
+                  >Скрыть</label
+                >
+              </div>
+            </th>
+          </tr>
+
+          <tr>
+            <th>Address</th>
+            <th>
+              <input
+                type="text"
+                class="form-control form-edit"
+                placeholder="Адрес"
+                value="{{ employee_info.Address }}"
+                name="Address"
+              />
+            </th>
+            <th>
+              <div class="form-check form-switch form-check-reverse">
+                {% if employee_info['HideAddress'] == 1 %}
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckChecked"
+                  name="HideAddress"
+                  checked
+                />
+                {% else %}
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDefault"
+                  name="HideAddress"
+                />
+                {% endif %}
+                <label class="form-check-label" for="flexSwitchCheckDefault"
+                  >Скрыть</label
+                >
+              </div>
+            </th>
+          </tr>
+
+          <tr>
+            <th>EditedBy</th>
+            <th>
+              <input
+                type="text"
+                class="form-control form-disabled"
+                placeholder="Кем редактировано"
+                value="{{ employee_info.EditedBy }}"
+                readonly="readonly"
+                disabled
+              />
+            </th>
+          </tr>
+
+          <tr>
+            <th>EditedDate</th>
+            <th>
+              <input
+                type="text"
+                class="form-control form-disabled"
+                placeholder="Дата редактирования"
+                value="{{ employee_info.EditedDate }}"
+                readonly="readonly"
+                disabled
+              />
+            </th>
+          </tr>
+        </table>
+      </div>
+      <button type="submit" class="btn btn-primary" id="save_button">
+        Сохранить изменения
+      </button>
+
+      {% else %} {% endif %}
     </form>
 
     {% if confirmation_text %}
-    <div class="toast align-items-center text-bg-primary border-0 " style="position: absolute; top: 0;" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body">
-                Изменения внесены
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Закрыть"></button>
-        </div>
+    <div
+      class="toast align-items-center text-bg-primary border-0"
+      style="position: absolute; top: 0"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    >
+      <div class="d-flex">
+        <div class="toast-body">Изменения внесены</div>
+        <button
+          type="button"
+          class="btn-close btn-close-white me-2 m-auto"
+          data-bs-dismiss="toast"
+          aria-label="Закрыть"
+        ></button>
+      </div>
     </div>
-    <!-- Скрипт Бутстрапа -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
     <script>
-        // Инициализация всплывающего сообщения после полной загрузки DOM
-        document.addEventListener("DOMContentLoaded", function () {
-            var toastElList = [].slice.call(document.querySelectorAll(".toast"));
-            var toastList = toastElList.map(function (toastEl) {
-                return new bootstrap.Toast(toastEl);
-            });
-            toastList.forEach((toast) => toast.show());
-        });
-    </script>
-    {% else %}
-    {% endif %}
+      const saveButton = document.getElementById("save_button");
 
-</body>
+      // При нажатии на кнопку, меняем текст на "Сохранение" и сохраняем состояние
+      saveButton.addEventListener("click", async (event) => {
+        saveButton.innerText = "Сохранение..."; // Изменяем текст кнопки на "Сохранение"
+        sessionStorage.setItem("savingState", "true"); // Сохраняем состояние в sessionStorage
+      });
+
+      // Проверяем состояние кнопки при загрузке страницы и восстанавливаем надпись по умолчанию
+      document.addEventListener("DOMContentLoaded", function () {
+        const savingState = sessionStorage.getItem("savingState");
+        if (savingState === "true") {
+          saveButton.innerText = "Сохранить изменения"; // Восстанавливаем текст кнопки на "Сохранение"
+        } else {
+          saveButton.innerText = "Сохранение..."; // Устанавливаем текст кнопки по умолчанию
+        }
+      });
+    </script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      // Инициализация всплывающего сообщения после полной загрузки DOM
+      document.addEventListener("DOMContentLoaded", function () {
+        var toastElList = [].slice.call(document.querySelectorAll(".toast"));
+        var toastList = toastElList.map(function (toastEl) {
+          return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach((toast) => toast.show());
+      });
+    </script>
+    {% else %} {% endif %}
+  </body>
 </html>

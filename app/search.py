@@ -73,7 +73,7 @@ class SearchEngine:
         if search_text:
             temp_data = list()
             for key in self.filtered_data[0].keys():
-                if key == 'org_tree_name':
+                if key in ['org_tree_name', 'OrgStructure']:
                     continue
                 temp_data += list(filter(lambda item: search_text.lower() in str(item[key]).lower() and item not in temp_data, self.filtered_data))
             self.filtered_data = temp_data

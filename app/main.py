@@ -26,6 +26,7 @@ print(datetime.now() - start_time)
 async def load_phonebook_data():
     global phonebook_data
     phonebook_data = DataBaseStorage()
+    print('Данные справочника обновлены')
 
 
 @app.get('/')
@@ -128,7 +129,7 @@ async def change_data(
     user_info = ActiveDirectoryConnection().authorize_user(token_data)
     if not user_info:
         raise HTTPException(
-            status_code=status.HTTP_401_FORBIDDEN,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="Токен cookie не верифицирован",
         )
     '''
@@ -136,10 +137,19 @@ async def change_data(
     '''
     post_data = await request.form()
     post_data = dict(post_data)
+
+    if user_info['group'] == 'moderator':
+        print(list(post_data.keys()))
+        if list(filter(lambda x: x != 'ID' and x not in ['Address', 'HideAddress', 'WorkPlace', 'HideWorkPlace'], post_data.keys())):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Недостаточно прав для изменения выбранных атрибутов",
+            )
+
     post_data['EditedBy'] = user_info['login']
     post_data['EditedDate'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     phonebook_data.update_edited_data(post_data)
-    response = RedirectResponse(f"/{user_info['group']}?employee_id={post_data['ID']}&confirmation_text=True")
+    response = RedirectResponse(f"/admin?employee_id={post_data['ID']}&confirmation_text=True")
     c = CookieUserName(token_data)
     response.set_cookie(key=c.key, value=c.value, max_age=c.max_age)
     return response

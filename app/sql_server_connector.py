@@ -151,9 +151,12 @@ class DataBaseStorage(SearchEngine):
         super().__init__()
         connector = SqlServerConnector()
         self.employees = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.employees")
-        self.departments = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.departments")
-        self.organizations = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.organizations")
+        self.departments = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.departments ORDER BY [Order], [Name] ASC")
+        self.organizations = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.organizations ORDER BY [Order], [Name] ASC")
         self.edited_data = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.EditedEmployees")
+        self.positions = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.Positions WHERE Category NOT IN ('Рабочие', 'Служащие')")
+
+        self.employees = list(filter(lambda x: x['Fired'] != 1 and x['PositionID'] in map(lambda y: y['ID'], self.positions), self.employees))
 
         try:
             with open(f'{os.path.dirname(os.path.realpath(__file__))}/static/content/no_avatar.jpg', 'rb') as file:
@@ -177,6 +180,8 @@ class DataBaseStorage(SearchEngine):
             row['insert_date'] = row['insert_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['insert_date'], datetime) else row['insert_date']
             row['update_date'] = row['update_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['update_date'], datetime) else row['update_date']
             row['OrganizationName'] = list(filter(lambda org: org['ID'] == row['OrganizationID'], self.organizations))[0]['Name']
+            position_info = list(filter(lambda x: x['ID'] == row['PositionID'], self.positions))
+            row['PositionOrder'] = position_info[0]['Order'] if position_info else 0
             department = list(filter(lambda dep: dep['ID'] == row['DepartmentID'] and dep['OrganizationID'] == row['OrganizationID'], self.departments))
             if department:
                 row['DepartmentName'] = department[0]['Name']
@@ -200,6 +205,8 @@ class DataBaseStorage(SearchEngine):
                 for key in self.edited_data[0].keys():
                     if key not in row:
                         row[key] = 0
+
+        self.employees = sorted(self.employees, key=lambda x: (x['PositionOrder'], x['Order'], x['FullNameRus']))
 
         # Формирование оргструктуры сотрудника
         for row in self.employees:

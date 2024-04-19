@@ -1,5 +1,5 @@
 DRIVER: ODBC Driver 17 for SQL Server
-Database: users_info_test
-PWD: fG6LkXROLIS1
+Database: users_info
+PWD:
 SERVER: sql121.isreg.ru
-UID: kmo
+UID: phonebook

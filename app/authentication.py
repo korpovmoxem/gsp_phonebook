@@ -93,9 +93,14 @@ class CookieUserName:
         Верификация токена, переданного в cookie
         :return Расшифрованный токен
         """
-        return Fernet(cls.load_cookie_key()).decrypt(token).decode('utf-8')
+        return Fernet(cls.load_cookie_key()).decrypt(bytes(token, 'utf-8')).decode('utf-8')
 
     def __init__(self, username: str):
         self.key = 'token'
         self.value = (Fernet(self.load_cookie_key()).encrypt(bytes(username, 'utf-8'))).decode('utf-8')
         self.max_age = 3600 # Время жизни cookie в секундах
+
+
+if __name__ == '__main__':
+    CookieUserName.write_cookie_key()
+    print('Токен Cookie создан')
