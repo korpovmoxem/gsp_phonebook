@@ -333,6 +333,32 @@ textarea {
   color: #dbdfd1;
 }
 
+.search_info {
+  display: flex;
+  justify-content: center
+}
+
+.status_info {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  color: #F75E5E;
+}
+
+.employee_status_icon {
+  max-width: 100px;
+  max-height: 100px;
+}
+
+.employee_status_icon_mini {
+  max-width: 35px;
+  max-height: 35px;
+}
+
+.table_name {
+  min-width: 600px!important;
+}
+
 .light input,
 select,
 textarea {

@@ -86,7 +86,7 @@ class SqlServerConnector:
             employee_id = data.pop('[ID]')
             query = f"UPDATE {self.__db_name}.{table_name} SET {','.join([f'{i[0]}={i[1]}' for i in data.items()])} WHERE ID = {employee_id}"
         else:
-            query = f"INSERT INTO {self.__db_name}.{table_name} ({','.join(data.keys())}) VALUES ({','.join(data.values())})"
+            query = f"INSERT INTO {self.__db_name}.{table_name} ({','.join(data.keys())}) VALUES ({','.join(map(str, data.values()))})"
 
         self.__execute_query(query)
         return data
@@ -156,7 +156,7 @@ class DataBaseStorage(SearchEngine):
         self.edited_data = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.EditedEmployees")
         self.positions = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.Positions WHERE Category NOT IN ('Рабочие', 'Служащие')")
 
-        self.employees = list(filter(lambda x: x['Fired'] != 1 and x['PositionID'] in map(lambda y: y['ID'], self.positions), self.employees))
+        self.employees = list(filter(lambda x: x['Fired'] != 1 and x['Decret'] != 1 and x['PositionID'] in map(lambda y: y['ID'], self.positions), self.employees))
 
         try:
             with open(f'{os.path.dirname(os.path.realpath(__file__))}/static/content/no_avatar.jpg', 'rb') as file:
@@ -179,9 +179,11 @@ class DataBaseStorage(SearchEngine):
             row['OrgStructure'] = list()
             row['insert_date'] = row['insert_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['insert_date'], datetime) else row['insert_date']
             row['update_date'] = row['update_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['update_date'], datetime) else row['update_date']
-            row['OrganizationName'] = list(filter(lambda org: org['ID'] == row['OrganizationID'], self.organizations))[0]['Name']
+            organization_info = list(filter(lambda org: org['ID'] == row['OrganizationID'], self.organizations))[0]
+            row['OrganizationName'] = organization_info['Name']
             position_info = list(filter(lambda x: x['ID'] == row['PositionID'], self.positions))
-            row['PositionOrder'] = position_info[0]['Order'] if position_info else 0
+            row['PositionOrder'] = position_info[0]['Order'] if position_info[0]['Order'] else 20000
+            row['OrganizationOrder'] = organization_info['Order'] if organization_info['Order'] else 20000
             department = list(filter(lambda dep: dep['ID'] == row['DepartmentID'] and dep['OrganizationID'] == row['OrganizationID'], self.departments))
             if department:
                 row['DepartmentName'] = department[0]['Name']
@@ -200,13 +202,15 @@ class DataBaseStorage(SearchEngine):
                 for key, value in employee_edited_data[0].items():
                     if isinstance(value, str):
                         value = value.strip("'") if value != 'NULL' else ''
-                    row[key] = value
+                    if value:
+                        row[key] = value
             else:
-                for key in self.edited_data[0].keys():
+                for key in ['HideEmail', 'HideTelephoneNumberCorp', 'HideMobileNumberCorp', 'HideExtNumID',
+                            'HideWorkPlace', 'HidePhotoID', 'HideAddress', 'EditedBy', 'EditedDate']:
                     if key not in row:
                         row[key] = 0
 
-        self.employees = sorted(self.employees, key=lambda x: (x['PositionOrder'], x['Order'], x['FullNameRus']))
+        self.employees = sorted(self.employees, key=lambda x: (x['OrganizationOrder'], x['PositionOrder'], x['Order'], x['FullNameRus']))
 
         # Формирование оргструктуры сотрудника
         for row in self.employees:

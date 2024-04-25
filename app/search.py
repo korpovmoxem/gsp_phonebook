@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 class SearchEngine:
     """
     Методы поиска по массиву из БД
@@ -25,10 +27,11 @@ class SearchEngine:
         :param page: Номер страницы
         :return:
         """
-        if page == 0:
+        if page == 1:
             return self.filtered_data[:101]
         else:
-            return self.filtered_data[int(str(page) + '01'):int(str(page + 1) + '01')]
+
+            return self.filtered_data[int(str(page - 1) + '01'):int(str(page) + '01')]
 
     def __get_child_department_employees(self, department_id: str, organization_id: int, org_tree_name=None) -> list:
         """
@@ -55,7 +58,12 @@ class SearchEngine:
         :param page: Номер страницы справочника
         :return: Отфильтрованный массив по указанным параметрам
         """
-        self.filtered_data = self.employees
+
+        self.filtered_data = deepcopy(self.employees)
+
+        if not search_text and not department and not organization:
+            return [self.get_page_data(page)]
+
         self.child_departments_data = list()
 
         if organization:
@@ -70,10 +78,12 @@ class SearchEngine:
             for child in child_departments:
                 self.child_departments_data += self.__get_child_department_employees(child['ID'], organization, (department_info['Name'], ))
 
-        if search_text:
+        if search_text and self.filtered_data:
             temp_data = list()
             for key in self.filtered_data[0].keys():
-                if key in ['org_tree_name', 'OrgStructure']:
+                if key in ['org_tree_name', 'OrgStructure', 'HideEmail', 'HideTelephoneNumberCorp',
+                           'HideMobileNumberCorp', 'HideExtNumID', 'HideWorkPlace',
+                           'HidePhotoID', 'HideAddress', 'EditedBy', 'EditedDate']:
                     continue
                 temp_data += list(filter(lambda item: search_text.lower() in str(item[key]).lower() and item not in temp_data, self.filtered_data))
             self.filtered_data = temp_data

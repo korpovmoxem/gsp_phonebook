@@ -12,7 +12,7 @@ from sql_server_connector import DataBaseStorage
 from authentication import ActiveDirectoryConnection, CookieUserName
 
 
-app = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None)
 app.mount('/static', StaticFiles(directory='static'), name='static')
 
 templates = Jinja2Templates(directory='templates')
@@ -30,7 +30,7 @@ async def load_phonebook_data():
 
 
 @app.get('/')
-def main_route(request: Request, search_text: str = '', department: str = '', organization: int = 0, page: int = 0):
+def main_route(request: Request, search_text: str = '', department: str = '', organization: int = 0, page: int = 1):
     return templates.TemplateResponse('mainpage.html', {
         'request': request,
         'items': phonebook_data.search(search_text, department, organization, page=page),
@@ -53,6 +53,7 @@ def login_page(
         username: Annotated[str, Form()] = '',
         password: Annotated[str, Form()] = '',
         token: str | None = Cookie(default=None),
+        employee_id: str | None = None,
 ):
     if token:
         return RedirectResponse('/admin')
@@ -77,7 +78,7 @@ def login_page(
             detail="Недостаточно прав для данного раздела",
         )
 
-    response = RedirectResponse(f'/admin')
+    response = RedirectResponse(f'/admin?employee_id={employee_id}')
     c = CookieUserName(username)
     response.set_cookie(key=c.key, value=c.value, max_age=c.max_age)
     return response
@@ -88,11 +89,11 @@ def login_page(
 def admin_page(
         request: Request,
         token: str | None = Cookie(default=None),
-        employee_id: str | None = None,
+        employee_id: str  = '',
         confirmation_text: bool = False,
 ):
     if not token:
-        return RedirectResponse('/login')
+        return RedirectResponse(f'/login?employee_id={employee_id}')
 
     user_info = ActiveDirectoryConnection().authorize_user(CookieUserName.verify_token(token))
     if not user_info:
@@ -132,9 +133,7 @@ async def change_data(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Токен cookie не верифицирован",
         )
-    '''
-    Добавить проверку на наличие прав для изменения определенных полей
-    '''
+
     post_data = await request.form()
     post_data = dict(post_data)
 
