@@ -9,8 +9,8 @@ from cryptography.fernet import Fernet
 
 class AuthenticationConfig:
     def __init__(self):
-        with open('active_directory_config.yaml', 'r', encoding='utf-8') as file:
-            self.config = yaml.load(file, Loader=SafeLoader)
+        with open('configs.yaml', 'r', encoding='utf-8') as file:
+            self.config = yaml.load(file, Loader=SafeLoader)['ActiveDirectory']
 
 
 class ActiveDirectoryConnection:
@@ -47,7 +47,7 @@ class ActiveDirectoryConnection:
     def authorize_user(self, username: str) -> bool | dict:
         """
         Проверка нахождения учетной записи в необходимой группе Active Directory
-        :return Имя пользователя
+        :return False если учетная запись не найдена, иначе словарь с ключами 'group', 'name', 'login'
         """
         for group in self.__config['AD_FILTER']:
             self.__connection.search(

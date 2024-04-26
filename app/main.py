@@ -10,6 +10,7 @@ from fastapi.responses import RedirectResponse
 
 from sql_server_connector import DataBaseStorage
 from authentication import ActiveDirectoryConnection, CookieUserName
+from redis_connector import RedisConnector
 
 
 app = FastAPI(docs_url=None, redoc_url=None)
@@ -31,6 +32,7 @@ async def load_phonebook_data():
 
 @app.get('/')
 def main_route(request: Request, search_text: str = '', department: str = '', organization: int = 0, page: int = 1):
+    RedisConnector().update_ip_logs(request.client.host)
     return templates.TemplateResponse('mainpage.html', {
         'request': request,
         'items': phonebook_data.search(search_text, department, organization, page=page),
@@ -89,7 +91,7 @@ def login_page(
 def admin_page(
         request: Request,
         token: str | None = Cookie(default=None),
-        employee_id: str  = '',
+        employee_id: str | None = None,
         confirmation_text: bool = False,
 ):
     if not token:
@@ -114,7 +116,44 @@ def admin_page(
         'employee_info': employee_info,
         'user_name': user_info['name'],
         'confirmation_text': confirmation_text,
+        'current_date': datetime.now().strftime('%Y-%m-%d'),
     })
+
+
+@app.get('/admin/logs')
+def get_logs(
+        employee_id: str | None = None,
+        begin_date: str | None = None,
+        end_date: str | None = None,
+        token: str | None = Cookie(default=None),
+):
+
+    if not token:
+        return RedirectResponse(f'/login')
+
+    user_info = ActiveDirectoryConnection().authorize_user(CookieUserName.verify_token(token))
+    if not user_info:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Токен cookie не верифицирован",
+        )
+
+    if user_info['group'] != 'admin':
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Недостаточно прав для данного раздела",
+        )
+
+    if begin_date and end_date:
+        begin_date, end_date = datetime.fromisoformat(begin_date), datetime.fromisoformat(end_date)
+        if begin_date > end_date:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Дата ОТ не может быть больше даты ДО",
+            )
+        return RedisConnector().read_ip_logs(begin_date, end_date)
+    if employee_id:
+        return RedisConnector().read_admin_logs(employee_id)
 
 
 @app.get('/change_data')
@@ -138,7 +177,6 @@ async def change_data(
     post_data = dict(post_data)
 
     if user_info['group'] == 'moderator':
-        print(list(post_data.keys()))
         if list(filter(lambda x: x != 'ID' and x not in ['Address', 'HideAddress', 'WorkPlace', 'HideWorkPlace'], post_data.keys())):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -149,6 +187,7 @@ async def change_data(
     post_data['EditedDate'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     phonebook_data.update_edited_data(post_data)
     response = RedirectResponse(f"/admin?employee_id={post_data['ID']}&confirmation_text=True")
+    RedisConnector().update_admin_logs(post_data)
     c = CookieUserName(token_data)
     response.set_cookie(key=c.key, value=c.value, max_age=c.max_age)
     return response

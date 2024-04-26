@@ -50,7 +50,7 @@
           class="form-control form-edit"
           name="employee_id"
           placeholder="ID сотрудника"
-          value="{{ '' if not employee_id else employee_id }}"
+          value="{{ '' if employee_id in ['None', None] else employee_id }}"
         />
       </div>
       <div class="button_block">

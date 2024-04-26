@@ -201,18 +201,14 @@
                     <div class="col-sm-4"><img class="miniature_photo" src="data:image/jpeg;base64,{{ item.Photo | safe }}" width="70" height="70" style="border-radius: 5px"/></div>
                     <div class="col-sm-8 thr__name">{{item.FullNameRus}}</div>
                     <div class='col-sm'>
-                           {% if item['Otpusk'] == 1 %}
-                      <img class='employee_status_icon_mini' src="{{ url_for('static', path='/content/vacation.png') }}" alt="В отпуске" title='Сотрудник находится в отпуске' data-toggle="tooltip" data-bs-placement="bottom">
+                           {% if item['Otpusk'] == 1 or item['Boleet'] == 1 %}
+                      <img class='employee_status_icon_mini' src="{{ url_for('static', path='/content/reachless.png') }}" alt="Недоступен" title='Сотрудник недоступен' data-toggle="tooltip" data-bs-placement="bottom">
                             <!--<h1 class="modal-title fs-5" id="exampleModalLabel">В отпуске</h1>-->
                           {% else %}
-                            {% if item['Boleet'] == 1 %}
-                      <img class='employee_status_icon_mini' src="{{ url_for('static', path='/content/illness.png') }}" alt="На больничном" title='Сотрудник находится на больничном' data-toggle="tooltip" data-bs-placement="bottom">
-                            {% else %}
                               {% if item['Komandirovka'] == 1 %}
                               <img class='employee_status_icon_mini' src="{{ url_for('static', path='/content/business_trip.png') }}" alt="В командировке" title='Сотрудник находится в командировке' data-toggle="tooltip" data-bs-placement="bottom">
                               {% else %}
                               {% endif %}
-                            {% endif %}
                             {% endif %}
                     </div>
                   </div>
@@ -236,18 +232,14 @@
                         <div class='col-md-auto'>
                           <img class="no_avatar" src="data:image/jpeg;base64,{{ item.Photo | safe }}" alt="Нет фото" width="125" height="125" style="border-radius: 5px"/>
                           <div class='status_info'>
-                           {% if item['Otpusk'] == 1 %}
-                            <img class='employee_status_icon' src="{{ url_for('static', path='/content/vacation.png') }}" alt="В отпуске" title='Сотрудник находится в отпуске' data-toggle="tooltip" data-bs-placement="bottom">
+                           {% if item['Otpusk'] == 1 or item['Boleet'] == 1 %}
+                            <img class='employee_status_icon' src="{{ url_for('static', path='/content/reachless.png') }}" alt="Недоступен" title='Сотрудник недоступен' data-toggle="tooltip" data-bs-placement="bottom">
                             <!--<h1 class="modal-title fs-5" id="exampleModalLabel">В отпуске</h1>-->
                           {% else %}
-                            {% if item['Boleet'] == 1 %}
-                            <img class='employee_status_icon' src="{{ url_for('static', path='/content/illness.png') }}" alt="На больничном" title='Сотрудник находится на больничном' data-toggle="tooltip" data-bs-placement="bottom">
-                            {% else %}
                             {% if item['Komandirovka'] == 1 %}
                             <img class='employee_status_icon' src="{{ url_for('static', path='/content/business_trip.png') }}" alt="В командировке" title='Сотрудник находится в командировке' data-toggle="tooltip" data-bs-placement="bottom">
                               {% else %}
                               {% endif %}
-                            {% endif %}
                             {% endif %}
                           </div>
                         </div>

@@ -15,8 +15,8 @@ class SqlServerConnector:
     """
 
     def __init__(self):
-        with open('sql_server_config.yaml', 'r') as file:
-            sql_server_config = yaml.load(file, Loader=SafeLoader)
+        with open('configs.yaml', 'r') as file:
+            sql_server_config = yaml.load(file, Loader=SafeLoader)['SQL']
 
         self.__sql_connector = pyodbc.connect(
             f'DRIVER={sql_server_config["DRIVER"]};'
@@ -168,11 +168,20 @@ class DataBaseStorage(SearchEngine):
         for row in self.employees:
 
             # Фото
-            if os.path.isdir("/mnt/phonebook_photo/") and f"{row['FL_ID']}.jpg" in os.listdir('/mnt/phonebook_photo/'):
-                with open(f"/mnt/phonebook_photo/{row['FL_ID']}.jpg", 'rb') as file:
-                    photo = file.read()
-            else:
+            photo_name = None
+            photo = None
+            if row['Email']:
+                photo_name = row['Email']
+            elif row['FL_ID']:
+                photo_name = row['FL_ID']
+
+            if photo_name:
+                if os.path.isdir("/mnt/phonebook_photo/") and f"{photo_name.lower()}.jpg" in os.listdir('/mnt/phonebook_photo/'):
+                    with open(f"/mnt/phonebook_photo/{photo_name.lower()}.jpg", 'rb') as file:
+                        photo = file.read()
+            if not photo:
                 photo = no_avatar
+
             row['Photo'] = base64.b64encode(photo).decode("utf-8")
 
             # Дополнение массива названием департамента и компании

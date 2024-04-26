@@ -1,5 +1,6 @@
 from copy import deepcopy
 
+
 class SearchEngine:
     """
     Методы поиска по массиву из БД
@@ -87,6 +88,9 @@ class SearchEngine:
                     continue
                 temp_data += list(filter(lambda item: search_text.lower() in str(item[key]).lower() and item not in temp_data, self.filtered_data))
             self.filtered_data = temp_data
+
+        if search_text and not self.filtered_data:
+            return [self.filtered_data]
 
         if self.filtered_data:
             self.filtered_data[0]['org_tree_name'] = self.filtered_data[0]['DepartmentName']
