@@ -1,6 +1,6 @@
 ActiveDirectory:
   AD_LOGIN: gsprom\phonebook_svc
-  AD_PASSWORD: 
+  AD_PASSWORD: DQq#%ew3ds!@
   AD_SERVER: gsprom.local
   AD_SEARCH_TREE: OU=_GSPROM-CENTRAL,DC=GSPROM,DC=LOCAL
   AD_FILTER:
@@ -9,7 +9,7 @@ ActiveDirectory:
 SQL:
   DRIVER: ODBC Driver 17 for SQL Server
   Database: users_info
-  PWD: 
+  PWD: 8RWgOmezBcXXbs7691YJ
   SERVER: sql121.isreg.ru
   UID: phonebook
 Redis:

@@ -52,6 +52,9 @@
           </ul>
           <div class="button__toggle">
             <div class="admin_entry">
+              <button class="button-open-now" data-bs-toggle="modal" data-bs-target="#exampleModal" type='button'>
+                <img src="{{ url_for('static', path='/content/help.png') }}" alt="Помощь" class="button-open"/>
+              </button>
               <a href="/login" target="_blank">
                 <button class="button-open-now">
                   <img src="{{ url_for('static', path='/content/enter_icon-white.png') }}" alt="Кнопка входа" class="button-open"/>
@@ -73,6 +76,24 @@
         </div>
       </div>
       </nav>
+
+      <!-- Модальное окно -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Помощь</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+        Уважаемые коллеги! Если у вас есть предложения или вы нашли ошибку, то направляйте письма на адрес <a class="content__link" href="mailto:phonebook@gsprom.ru">phonebook@gsprom.ru</a>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <!-- Контейнер в котором находится структура сайта таблица и раскрывающийся список -->
       <div class="container">
@@ -173,7 +194,7 @@
               {% else %}
                {% if dep_org_info['department']['Name'] %}
                 <thead>
-                  <th colspan="2" class='dep_org_names'>{{ dep_org_info['department']['Name'] }}</th>
+                  <th colspan="2" class='dep_org_names'>{{ dep_org_info['department']['Name'] }}111</th>
                   <th colspan="2" class='dep_org_names' style="text-align: right">{{ dep_org_info['organization']['Name'] }}</th>
                 </thead>
                 {% else %}
@@ -436,6 +457,7 @@
             </div>
           </div>
       </div>
+
       <!-- Скрипт для кнопки с инструкцией -->
       <script>
         const button = document.querySelector("#button");

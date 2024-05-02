@@ -176,8 +176,8 @@ class DataBaseStorage(SearchEngine):
                 photo_name = row['FL_ID']
 
             if photo_name:
-                if os.path.isdir("/mnt/phonebook_photo/") and f"{photo_name.lower()}.jpg" in os.listdir('/mnt/phonebook_photo/'):
-                    with open(f"/mnt/phonebook_photo/{photo_name.lower()}.jpg", 'rb') as file:
+                if os.path.isdir("/mnt/phonebook_photo/") and f"{photo_name}.jpg" in os.listdir('/mnt/phonebook_photo/'):
+                    with open(f"/mnt/phonebook_photo/{photo_name}.jpg", 'rb') as file:
                         photo = file.read()
             if not photo:
                 photo = no_avatar

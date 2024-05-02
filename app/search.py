@@ -50,6 +50,22 @@ class SearchEngine:
             child_employees += self.__get_child_department_employees(child['ID'], child['OrganizationID'], org_tree_name)
         return child_employees
 
+    def __local_collection_search(self, collection: list, search_text: str) -> list:
+        """
+        Поиск по поисковому тексту внутри одного массива
+        :param collection: Массив данных (сотрудники департамента)
+        :param search_text: Поисковый текст
+        :return: Отфильтрованный массив данных по поисковому тексту
+        """
+        result = list()
+        for key in collection[0].keys():
+            if key in ['org_tree_name', 'OrgStructure', 'HideEmail', 'HideTelephoneNumberCorp',
+                       'HideMobileNumberCorp', 'HideExtNumID', 'HideWorkPlace',
+                       'HidePhotoID', 'HideAddress', 'EditedBy', 'EditedDate']:
+                continue
+            result += list(filter(lambda item: search_text.lower() in str(item[key]).lower() and item not in result, collection))
+        return result
+
     def search(self, search_text: str = '', department: str = '', organization: int | str = '', page: int = 0) -> list:
         """
         Поиск по всему массиву
@@ -80,22 +96,25 @@ class SearchEngine:
                 self.child_departments_data += self.__get_child_department_employees(child['ID'], organization, (department_info['Name'], ))
 
         if search_text and self.filtered_data:
-            temp_data = list()
-            for key in self.filtered_data[0].keys():
-                if key in ['org_tree_name', 'OrgStructure', 'HideEmail', 'HideTelephoneNumberCorp',
-                           'HideMobileNumberCorp', 'HideExtNumID', 'HideWorkPlace',
-                           'HidePhotoID', 'HideAddress', 'EditedBy', 'EditedDate']:
-                    continue
-                temp_data += list(filter(lambda item: search_text.lower() in str(item[key]).lower() and item not in temp_data, self.filtered_data))
-            self.filtered_data = temp_data
+            self.filtered_data = self.__local_collection_search(self.filtered_data, search_text)
 
-        if search_text and not self.filtered_data:
+        # Применение поиска к дочерним подразделениям
+        if self.child_departments_data and search_text:
+            self.child_departments_data = list(filter(lambda x: bool(x), (map(lambda x: self.__local_collection_search(x, search_text), self.child_departments_data))))
+
+        if search_text and not self.filtered_data and not self.child_departments_data:
             return [self.filtered_data]
 
         if self.filtered_data:
             self.filtered_data[0]['org_tree_name'] = self.filtered_data[0]['DepartmentName']
+
+        if not self.filtered_data and self.child_departments_data:
+            for i in range(len(self.child_departments_data)):
+                self.child_departments_data[i][0]['org_tree_name'] = self.child_departments_data[i][0]['DepartmentName']
+
         if self.child_departments_data and self.filtered_data:
             return [self.filtered_data] + self.child_departments_data
+
         elif self.child_departments_data:
             return self.child_departments_data
 

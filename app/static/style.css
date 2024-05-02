@@ -130,6 +130,17 @@ body {
   background: #1f82c0;
 }
 
+.support_container {
+  background-color: #1f82c0
+}
+
+.support_email {
+  display: flex;
+  justify-content: center;
+  color: white;
+}
+
+
 /* Стили для курсора и стили для кода в js */
 /* Начальные стили для элемента, который будет следовать за курсором, в нашем случае небольшой кружок */
 .follow-cursor {
