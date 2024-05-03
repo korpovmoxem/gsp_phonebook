@@ -275,7 +275,7 @@ class DataBaseStorage(SearchEngine):
             dep_org_info['department']['Name'] = department_info['Name']
         return dep_org_info
 
-    def update_edited_data(self, data: dict) -> None:
+    async def update_edited_data(self, data: dict) -> None:
         """
         Обновляет запись пользователя в массиве хранилища
         :param data: ID пользователя

@@ -538,6 +538,10 @@ input[type="search"]::-webkit-search-cancel-button {
 .clear_search {
   margin-top: -30px;
   margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .clear_search_button {

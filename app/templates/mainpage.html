@@ -102,16 +102,15 @@
     <button onclick="topFunction()" id="button_scroll_up" title="Go to top">▲</button>   
     <!-- Поисковая строка сотрудников и кнопка "Искать" -->
     <form  method="get" class='search_args'>
-        <!-- <select disabled class="form-select" id="search_filter" aria-label="Фильтр" style="width: 250px; border-color: #252526; border-width: 1px; border-radius: 5px 0 0 5px; visibility: hidden">
-        <option selected value="all">{{ search_filter }}</option>
-        <option value="name">ФИО</option>
-        <option value="job_title">Должность</option>
-        <option value="phone_code">Внутренний номер</option>
-        <option value="work_phone">Рабочий телефон</option>
-        <option value="email">Email</option>
-        <option value="company">Компания</option>
-        <option value="department">Отдел</option>
-        </select> -->
+       <select class="form-select" name="search_filter" aria-label="Фильтр" style="width: 250px; border-color: #252526; border-width: 1px; border-radius: 5px 0 0 5px;">
+          {% if search_filter == 'global' %}
+          <option selected value="global">Глобальный поиск</option>
+          <option value="department">По отделу</option>
+          {% else %}
+         <option value="global">Глобальный поиск</option>
+         <option selected value="department">По отделу</option>
+         {% endif %}
+        </select>
         <input  type='search' id='search_text' value='{{ search_text }}' class='input-line inputBox' name=search_text
         title='Поиск осуществляется одновременно по всем атрибутам (ФИО, отдел, телефон и тд.). Для сброса результатов поиска - нажмите "Искать" с пустым полем' data-toggle="tooltip" data-bs-placement="top">
         <input type="hidden" name="department" value="{{ dep_org_info['department']['ID'] }}">
@@ -138,6 +137,16 @@
     </form>
 
     <form class="clear_search">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+        <label class="form-check-label" for="flexSwitchCheckDefault">Поиск по отделу</label>
+      </div>
+      <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+      <label class="form-check-label" for="flexCheckDefault">
+    Поиск по отделу
+      </label>
+    </div>
       <input class='btn btn-primary clear_search_button' type='submit' value='Сбросить поиск'>
     </form>
 
@@ -194,7 +203,7 @@
               {% else %}
                {% if dep_org_info['department']['Name'] %}
                 <thead>
-                  <th colspan="2" class='dep_org_names'>{{ dep_org_info['department']['Name'] }}111</th>
+                  <th colspan="2" class='dep_org_names'>{{ dep_org_info['department']['Name'] }}</th>
                   <th colspan="2" class='dep_org_names' style="text-align: right">{{ dep_org_info['organization']['Name'] }}</th>
                 </thead>
                 {% else %}
@@ -219,7 +228,11 @@
                 <TD class='table_name'>
                 <div class="container text-center">
                   <div class="row row-cols-2" style="align-items: center;">
+                    {% if not item.HidePhotoID %}
                     <div class="col-sm-4"><img class="miniature_photo" src="data:image/jpeg;base64,{{ item.Photo | safe }}" width="70" height="70" style="border-radius: 5px"/></div>
+                    {% else %}
+                    <div class="col-sm-4"><img class="miniature_photo" src="{{ url_for('static', path='/content/no_avatar.jpg') }}" width="70" height="70" style="border-radius: 5px"/></div>
+                    {% endif %}
                     <div class="col-sm-8 thr__name">{{item.FullNameRus}}</div>
                     <div class='col-sm'>
                            {% if item['Otpusk'] == 1 or item['Boleet'] == 1 %}
@@ -236,8 +249,8 @@
                 </div>
                 </TD>
                 <TD class='table_job_title'>{{item.PositionTitle}}</TD>
-                <TD class='table_prefix'>{{item.TelephoneNumberCorp[:2] if item.HideTelephoneNumberCorp == 0 else ''}}</TD>
-                <TD class='table_phone_code'>{{item.TelephoneNumberCorp[2:] if item.HideTelephoneNumberCorp == 0 else ''}}</TD>
+                <TD class='table_prefix'>{{ '' if item.HideTelephoneNumberCorp == True else item.TelephoneNumberCorp[:2] }}</TD>
+                <TD class='table_phone_code'>{{ '' if item.HideTelephoneNumberCorp == True else item.TelephoneNumberCorp[2:] }}</TD>
               </TR>
             <!-- Модальное окно -->
             <div class="modal fade" id="modal_{{ item.ID }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -251,7 +264,11 @@
                   <div class="container text-center">
                     <div class='row'>
                         <div class='col-md-auto'>
+                        {% if not item.HidePhotoID %}
                           <img class="no_avatar" src="data:image/jpeg;base64,{{ item.Photo | safe }}" alt="Нет фото" width="125" height="125" style="border-radius: 5px"/>
+                          {% else %}
+                          <div class="col-sm-4"><img class="miniature_photo" src="{{ url_for('static', path='/content/no_avatar.jpg') }}" width="125" height="125" style="border-radius: 5px"/></div>
+                        {% endif %}
                           <div class='status_info'>
                            {% if item['Otpusk'] == 1 or item['Boleet'] == 1 %}
                             <img class='employee_status_icon' src="{{ url_for('static', path='/content/reachless.png') }}" alt="Недоступен" title='Сотрудник недоступен' data-toggle="tooltip" data-bs-placement="bottom">

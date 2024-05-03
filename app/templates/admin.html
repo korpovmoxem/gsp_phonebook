@@ -415,14 +415,7 @@
           <tr>
             <th>PhotoID</th>
             <th>
-              <input
-                type="text"
-                class="form-control form-disabled"
-                placeholder="Фото"
-                value="{{ employee_info.Photo }}"
-                readonly="readonly"
-                disabled
-              />
+              <img class="miniature_photo" src="data:image/jpeg;base64,{{ employee_info.Photo | safe }}" width="75" height="75" style="border-radius: 5px"/>
             </th>
             <th>
               <div class="form-check form-switch form-check-reverse">
