@@ -24,22 +24,30 @@ print(datetime.now() - start_time)
 
 
 @app.get('/update_data')
-async def load_phonebook_data():
+def load_phonebook_data():
     global phonebook_data
     phonebook_data = DataBaseStorage()
     print('Данные справочника обновлены')
 
 
 @app.get('/')
-def main_route(request: Request, search_text: str = '', department: str = '', organization: int = 0, page: int = 1):
+def main_route(
+        request: Request,
+        search_text: str = '',
+        department: str = '',
+        organization: int = 0,
+        page: int = 1,
+        search_filter: str = 'global',
+):
     RedisConnector().update_ip_logs(request.client.host)
     return templates.TemplateResponse('mainpage.html', {
         'request': request,
-        'items': phonebook_data.search(search_text, department, organization, page=page),
+        'items': phonebook_data.search(search_text, department, organization, page=page, search_filter=search_filter),
         'page': page,
         'dep_org_info': phonebook_data.get_dep_org_info(organization, department),
         'pages_count': phonebook_data.get_pages_count(),
         'search_text': search_text,
+        'search_filter': search_filter,
     })
 
 

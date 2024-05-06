@@ -50,7 +50,9 @@ class SearchEngine:
             child_employees += self.__get_child_department_employees(child['ID'], child['OrganizationID'], org_tree_name)
         return child_employees
 
-    def __local_collection_search(self, collection: list, search_text: str) -> list:
+
+    @staticmethod
+    def __local_collection_search(collection: list, search_text: str) -> list:
         """
         Поиск по поисковому тексту внутри одного массива
         :param collection: Массив данных (сотрудники департамента)
@@ -63,19 +65,29 @@ class SearchEngine:
                        'HideMobileNumberCorp', 'HideExtNumID', 'HideWorkPlace',
                        'HidePhotoID', 'HideAddress', 'EditedBy', 'EditedDate']:
                 continue
+            if key == 'FullNameRus':
+                result += list(filter(lambda item: search_text.lower().replace('е', 'ё') in str(item[key]).lower() and item not in result, collection))
             result += list(filter(lambda item: search_text.lower() in str(item[key]).lower() and item not in result, collection))
         return result
 
-    def search(self, search_text: str = '', department: str = '', organization: int | str = '', page: int = 0) -> list:
+    def search(self,
+               search_text: str = '',
+               department: str = '',
+               organization: int | str = '',
+               page: int = 0,
+               search_filter: str = 'global',
+               ) -> list:
         """
         Поиск по всему массиву
         :param search_text: Строка из поля поиска
         :param department: ID отдела
         :param organization: ID компании
         :param page: Номер страницы справочника
+        :param search_filter: Метод поиска (глобальный, внутри компании)
         :return: Отфильтрованный массив по указанным параметрам
         """
-
+        if not search_text:
+            search_filter = 'global'
         self.filtered_data = deepcopy(self.employees)
 
         if not search_text and not department and not organization:
@@ -83,12 +95,20 @@ class SearchEngine:
 
         self.child_departments_data = list()
 
-        if organization:
+        if search_text and search_filter == 'department':
+            if organization:
+                self.filtered_data = list(filter(lambda item: item['OrganizationID'] == organization, self.filtered_data))
+
+            if department and department != organization:
+                self.filtered_data = list(filter(lambda item: item['DepartmentID'] == department, self.filtered_data))
+
+        if organization and not search_text:
             self.filtered_data = list(filter(lambda item: item['OrganizationID'] == organization, self.filtered_data))
 
-        if department and department != organization:
+        if department and department != organization and not search_text:
             self.filtered_data = list(filter(lambda item: item['DepartmentID'] == department, self.filtered_data))
 
+        if department and department != organization:
             # Поиск сотрудников дочерних подразделений
             child_departments = list(filter(lambda x: x['ParentID'] == department and x['OrganizationID'] == organization, self.departments))
             department_info = list(filter(lambda x: x['ID'] == department and x['OrganizationID'] == organization, self.departments))[0]
