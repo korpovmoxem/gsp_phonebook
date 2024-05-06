@@ -131,7 +131,7 @@ body {
 }
 
 .support_container {
-  background-color: #1f82c0
+  background-color: #1f82c0;
 }
 
 .support_email {
@@ -139,7 +139,6 @@ body {
   justify-content: center;
   color: white;
 }
-
 
 /* Стили для курсора и стили для кода в js */
 /* Начальные стили для элемента, который будет следовать за курсором, в нашем случае небольшой кружок */
@@ -346,14 +345,14 @@ textarea {
 
 .search_info {
   display: flex;
-  justify-content: center
+  justify-content: center;
 }
 
 .status_info {
   display: flex;
   justify-content: center;
   margin-top: 30px;
-  color: #F75E5E;
+  color: #f75e5e;
 }
 
 .employee_status_icon {
@@ -367,7 +366,7 @@ textarea {
 }
 
 .table_name {
-  min-width: 600px!important;
+  min-width: 600px !important;
 }
 
 .light input,
@@ -935,6 +934,15 @@ th {
 }
 
 @media (max-width: 1368px) {
+  .col-sm {
+    position: absolute;
+    top: 25px;
+    right: -65px;
+  }
+  .table_name {
+    position: relative;
+    min-width: 450px !important;
+  }
   .table_job_title {
     max-width: 300px;
   }
