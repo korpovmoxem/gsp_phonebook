@@ -135,6 +135,18 @@
           </svg>
         </div>
     </form>
+    <script>
+      const searchInput = document.getElementById('search_text');
+      const searchButton = document.getElementById('search');
+      searchButton.addEventListener('click', function() {
+          const searchText = searchInput.value.trim();
+
+          if (searchText.length < 2) {
+              alert('Нужно ввести больше одного символа для поиска.');
+          } 
+      });
+    </script>
+  
 
     <form class="clear_search">
       <div class="form-check form-switch">
