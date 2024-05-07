@@ -37,17 +37,15 @@ def main_route(
         department: str = '',
         organization: int = 0,
         page: int = 1,
-        search_filter: str = 'global',
 ):
     RedisConnector().update_ip_logs(request.client.host)
     return templates.TemplateResponse('mainpage.html', {
         'request': request,
-        'items': phonebook_data.search(search_text, department, organization, page=page, search_filter=search_filter),
+        'items': phonebook_data.search(search_text, department, organization, page=page),
         'page': page,
         'dep_org_info': phonebook_data.get_dep_org_info(organization, department),
         'pages_count': phonebook_data.get_pages_count(),
         'search_text': search_text,
-        'search_filter': search_filter,
     })
 
 

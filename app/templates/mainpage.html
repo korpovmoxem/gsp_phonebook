@@ -102,15 +102,6 @@
     <button onclick="topFunction()" id="button_scroll_up" title="Go to top">▲</button>   
     <!-- Поисковая строка сотрудников и кнопка "Искать" -->
     <form  method="get" class='search_args'>
-       <select class="form-select" name="search_filter" aria-label="Фильтр" style="width: 250px; border-color: #252526; border-width: 1px; border-radius: 5px 0 0 5px;">
-          {% if search_filter == 'global' %}
-          <option selected value="global">Глобальный поиск</option>
-          <option value="department">По отделу</option>
-          {% else %}
-         <option value="global">Глобальный поиск</option>
-         <option selected value="department">По отделу</option>
-         {% endif %}
-        </select>
         <input  type='search' id='search_text' value='{{ search_text }}' class='input-line inputBox' name=search_text
         title='Поиск осуществляется одновременно по всем атрибутам (ФИО, отдел, телефон и тд.). Для сброса результатов поиска - нажмите "Искать" с пустым полем' data-toggle="tooltip" data-bs-placement="top">
         <input type="hidden" name="department" value="{{ dep_org_info['department']['ID'] }}">
@@ -137,42 +128,8 @@
     </form>
 
     <form class="clear_search">
-      <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-        <label class="form-check-label" for="flexSwitchCheckDefault">Поиск по отделу</label>
-      </div>
-      <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-      <label class="form-check-label" for="flexCheckDefault">
-    Поиск по отделу
-      </label>
-    </div>
       <input class='btn btn-primary clear_search_button' type='submit' value='Сбросить поиск'>
-    </form>
-
-      <div class='search_info'>
-      {% if dep_org_info['department']['Name'] %}
-        Поиск по: {{ dep_org_info['department']['Name'] }} - {{ dep_org_info['organization']['Name']  }}
-      {% else %}
-        {% if dep_org_info['organization']['Name'] %}
-          Поиск по: {{ dep_org_info['organization']['Name']  }}
-        {% else %}
-        {% endif %}
-      {% endif %}
-      </div>
-
-    <!--
-    <button class="btn btn-outline-primary mb-3" id="button" type="button">
-      Открыть блок
-  </button>
-  <div class="card card-body hidden" id="content">
-    Блок с контентом. Lorem ipsum dolor sit amet consectetur adipisicing
-    elit. Distinctio, maiores nulla nesciunt labore optio minus
-    quibusdam excepturi voluptate atque iusto eaque enim, quos
-    consectetur aliquam quasi repellendus vel quis sequi.
-</div>
-    -->
-  
+    </form>  
 
     <!-- Раскрывающийся список филиалов и Таблица с пользователями телефонного справочник  и бутсраповский класс с колонками-->
       <div class="row row-cols-2">
