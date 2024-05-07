@@ -132,7 +132,7 @@
       searchButton.addEventListener('click', function() {
           const searchText = searchInput.value.trim();
 
-          if (searchText.length < 2) {
+          if (searchText.length == 1) {
               alert('Нужно ввести больше одного символа для поиска.');
           } 
       });
