@@ -49,6 +49,10 @@ body {
   justify-content: space-between;
 }
 
+.department_fields {
+  display: flex;
+}
+
 .form-control {
   background-color: #252526 !important;
   color: white !important;

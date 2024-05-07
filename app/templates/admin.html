@@ -54,6 +54,32 @@
     <div class="page_title">
       <p class="text-center">Панель администратора</p>
     </div>
+
+    <form method="post" id="input_form" action='/change_data'>
+      <div class="mb-3 department_fields">
+        <input
+          type="text"
+          class="form-control form-edit"
+          name="department"
+          placeholder="ID департамента"
+          value="{{ '' if department in ['None', None] else department }}"
+      />
+        <input
+          type="text"
+          class="form-control form-edit"
+          name="department_order"
+          placeholder="Order"
+          value="{{ '' if department_order in ['None', None] else department_order }}"
+      />
+      </div>
+      <div class="button_block">
+        <button type="submit" class="btn btn-primary" id="submit_button">
+          Изменить порядок департамента
+        </button>
+        {{ confirmation_text }}
+      </div>
+    </form>
+
     <form method="get" id="input_form">
       <div class="mb-3">
         <input
@@ -71,6 +97,7 @@
         {{ confirmation_text }}
       </div>
     </form>
+
     {% if employee_info %}
 
     <form class="employee_attrs" method="post" action="/change_data">
