@@ -72,10 +72,10 @@ class SqlServerConnector:
         :return: Преобразованные данные для запроса в БД
         """
         if table_name == 'Positions':
-            query = f"SELECT [PositionID] FROM {self.__db_name}.Employees WHERE ID = '{data['ID']}'"
+            query = f"SELECT [PositionID] FROM {self.__db_name}.Employees WHERE ID='{data['ID']}'"
             entry = self.__execute_query(query)
             position_id = entry[0][0]
-            query = f"UPDATE {self.__db_name}.{table_name} SET [Order]={data['Order']} WHERE ID={position_id}"
+            query = f"UPDATE {self.__db_name}.{table_name} SET [Order]={data['Order']} WHERE ID='{position_id}'"
             self.__execute_query(query)
 
         elif table_name == 'EditedEmployees':
