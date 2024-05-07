@@ -188,12 +188,12 @@ async def change_data(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Недостаточно прав для изменения выбранных атрибутов",
             )
-
     post_data['EditedBy'] = user_info['login']
     post_data['EditedDate'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    copy_post_data = post_data
     phonebook_data.update_edited_data(post_data)
     response = RedirectResponse(f"/admin?employee_id={post_data['ID']}&confirmation_text=True")
-    RedisConnector().update_admin_logs(post_data)
+    RedisConnector().update_admin_logs(copy_post_data)
     c = CookieUserName(token_data)
     response.set_cookie(key=c.key, value=c.value, max_age=c.max_age)
     return response

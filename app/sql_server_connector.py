@@ -64,32 +64,39 @@ class SqlServerConnector:
         data_fields = self.__get_column_names()
         return list(map(lambda x: dict(zip(data_fields, x)), raw_data))
 
-    def update_data(self, data: dict) -> dict:
+    def update_data(self, data: dict, table_name: str = 'EditedEmployees') -> dict:
         """
         Обновляет данные в таблицах, в зависимости от ключа в словаре
         :param data: Словарь, в котором ключ - название атрибута таблицы в БД, значение - новое значение атрибута
+        :param table_name: Название таблицы
         :return: Преобразованные данные для запроса в БД
         """
-        table_name = 'EditedEmployees'
-        query = f"SELECT * FROM {self.__db_name}.{table_name} WHERE ID = '{data['ID']}'"
-        entry = self.__execute_query(query)
-        hide_columns = filter(lambda x: 'Hide' in x, self.__get_column_names())
-        for column in hide_columns:
-            if column in data:
-                data[column] = 1
+        if table_name == 'Positions':
+            query = f"SELECT [PositionID] FROM {self.__db_name}.Employees WHERE ID = '{data['ID']}'"
+            entry = self.__execute_query(query)
+            position_id = entry[0][0]
+            query = f"UPDATE {self.__db_name}.{table_name} SET Order={data['Order']} WHERE ID={position_id}"
+            self.__execute_query(query)
+        elif table_name == 'EditedEmployees':
+            query = f"SELECT * FROM {self.__db_name}.{table_name} WHERE ID = '{data['ID']}'"
+            entry = self.__execute_query(query)
+            hide_columns = filter(lambda x: 'Hide' in x, self.__get_column_names())
+            for column in hide_columns:
+                if column in data:
+                    data[column] = 1
+                else:
+                    data[column] = 0
+
+            data = dict(map(lambda x: (f"[{x[0]}]",f"'{x[1]}'" if x[1] else 'NULL'), data.items()))
+            data = dict(map(lambda x: (x[0], int(x[1].strip("'")) if x[1].strip("'").isdigit() else x[1]), data.items()))
+            if entry:
+                employee_id = data.pop('[ID]')
+                query = f"UPDATE {self.__db_name}.{table_name} SET {','.join([f'{i[0]}={i[1]}' for i in data.items()])} WHERE ID = {employee_id}"
             else:
-                data[column] = 0
+                query = f"INSERT INTO {self.__db_name}.{table_name} ({','.join(data.keys())}) VALUES ({','.join(map(str, data.values()))})"
 
-        data = dict(map(lambda x: (f"[{x[0]}]",f"'{x[1]}'" if x[1] else 'NULL'), data.items()))
-        data = dict(map(lambda x: (x[0], int(x[1].strip("'")) if x[1].strip("'").isdigit() else x[1]), data.items()))
-        if entry:
-            employee_id = data.pop('[ID]')
-            query = f"UPDATE {self.__db_name}.{table_name} SET {','.join([f'{i[0]}={i[1]}' for i in data.items()])} WHERE ID = {employee_id}"
-        else:
-            query = f"INSERT INTO {self.__db_name}.{table_name} ({','.join(data.keys())}) VALUES ({','.join(map(str, data.values()))})"
-
-        self.__execute_query(query)
-        return data
+            self.__execute_query(query)
+            return data
 
 
 class DataBaseStorage(SearchEngine):
@@ -155,6 +162,7 @@ class DataBaseStorage(SearchEngine):
         self.organizations = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.organizations ORDER BY [Order], [Name] ASC")
         self.edited_data = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.EditedEmployees")
         self.positions = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.Positions WHERE Category NOT IN ('Рабочие', 'Служащие')")
+        self.categories = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.Categories")
 
         self.employees = list(filter(lambda x: x['Fired'] != 1 and x['Decret'] != 1 and x['PositionID'] in map(lambda y: y['ID'], self.positions), self.employees))
 
@@ -188,6 +196,11 @@ class DataBaseStorage(SearchEngine):
             row['OrgStructure'] = list()
             row['insert_date'] = row['insert_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['insert_date'], datetime) else row['insert_date']
             row['update_date'] = row['update_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['update_date'], datetime) else row['update_date']
+            category = list(filter(lambda x: x['ID'] == row['CategoryID'], self.categories))
+            if not category:
+                row['CategoryOrder'] = 100
+            else:
+                row['CategoryOrder'] = category[0]['Order']
             organization_info = list(filter(lambda org: org['ID'] == row['OrganizationID'], self.organizations))[0]
             row['OrganizationName'] = organization_info['Name']
             position_info = list(filter(lambda x: x['ID'] == row['PositionID'], self.positions))
@@ -219,7 +232,7 @@ class DataBaseStorage(SearchEngine):
                     if key not in row:
                         row[key] = 0
 
-        self.employees = sorted(self.employees, key=lambda x: (x['OrganizationOrder'], x['PositionOrder'], x['Order'], x['FullNameRus']))
+        self.employees = sorted(self.employees, key=lambda x: (x['OrganizationOrder'], x['CategoryOrder'], x['PositionOrder'], x['Order'], x['FullNameRus']))
 
         # Формирование оргструктуры сотрудника
         for row in self.employees:
@@ -239,7 +252,7 @@ class DataBaseStorage(SearchEngine):
             for department in list(filter(lambda dep: dep['Level'] == 1 and dep['OrganizationID'] == organization['ID'], self.departments)):
                 child_tree['Children'].append(
                     {
-                        'ID': department['ID'],
+                         'ID': department['ID'],
                         'Name': department['Name'],
                         'Filial': department['Filial'],
                         'Inn': department['OrganizationID'],
@@ -275,15 +288,18 @@ class DataBaseStorage(SearchEngine):
             dep_org_info['department']['Name'] = department_info['Name']
         return dep_org_info
 
-    async def update_edited_data(self, data: dict) -> None:
+    def update_edited_data(self, data: dict) -> None:
         """
         Обновляет запись пользователя в массиве хранилища
         :param data: ID пользователя
         """
         connector = SqlServerConnector()
+        position_order = data.pop('PositionOrder')
+        connector.update_data({'ID': data['ID'], 'Order': position_order}, 'Positions')
         edited_data = connector.update_data(data)
         employee_data = list(filter(lambda x: x['ID'] == data['ID'], self.employees))[0]
         employee_data_index = self.employees.index(employee_data)
+        data['PositionOrder'] = position_order
         for key, value in edited_data.items():
             if isinstance(value, str):
                 value = value.strip("'") if value != 'NULL' else ''

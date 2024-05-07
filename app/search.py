@@ -86,6 +86,18 @@ class SearchEngine:
         if not search_text and not department and not organization:
             return [self.get_page_data(page)]
 
+        if search_text:
+            result = list()
+            searched_data = self.__local_collection_search(self.filtered_data, search_text)
+            for item in searched_data:
+                if item['DepartmentName'] in result:
+                    continue
+                department_items = list(filter(lambda x: item['DepartmentID'] == x['DepartmentID'] and item['OrganizationID'] == x['OrganizationID'], searched_data))
+                if department_items and department_items not in result:
+                    result.append(department_items)
+            self.filtered_data = result
+            return self.get_page_data(page)
+
         self.child_departments_data = list()
 
         if organization:
@@ -99,16 +111,6 @@ class SearchEngine:
             department_info = list(filter(lambda x: x['ID'] == department and x['OrganizationID'] == organization, self.departments))[0]
             for child in child_departments:
                 self.child_departments_data += self.__get_child_department_employees(child['ID'], organization, (department_info['Name'], ))
-
-        if search_text and self.filtered_data:
-            self.filtered_data = self.__local_collection_search(self.filtered_data, search_text)
-
-        # Применение поиска к дочерним подразделениям
-        if self.child_departments_data and search_text:
-            self.child_departments_data = list(filter(lambda x: bool(x), (map(lambda x: self.__local_collection_search(x, search_text), self.child_departments_data))))
-
-        if search_text and not self.filtered_data and not self.child_departments_data:
-            return [self.filtered_data]
 
         if self.filtered_data:
             self.filtered_data[0]['org_tree_name'] = self.filtered_data[0]['DepartmentName']

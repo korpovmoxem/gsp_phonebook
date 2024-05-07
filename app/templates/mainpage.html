@@ -152,6 +152,12 @@
         <div class="col-sm-9 col-wrapper">
           <div class='items_table'>
             <table class='table table-bordered table-hover'>
+              {% if search_text %}
+              <thead>
+                <th colspan="2" class='dep_org_names'>{{ department_employees[0]['DepartmentName'] }}</th>
+                <th colspan="2" class='dep_org_names' style="text-align: right">{{ department_employees[0]['OrganizationName'] }}</th>
+              </thead>
+              {% else %}
               {% if department_employees and dep_org_info['department']['Name'] %}
               <thead>
                 <th colspan="2" class='dep_org_names'>{{ department_employees[0]['org_tree_name'] }}</th>
@@ -170,6 +176,7 @@
                   </thead>
                   {% else %}
                   {% endif %}
+              {% endif %}
               {% endif %}
               {% endif %}
               <thead>
@@ -412,6 +419,7 @@
             <div class="pages_title">
               Страницы
             </div>
+            {% if not search_text and not department and not organization %}
             <div class="pages_count">
               {% for p in pages_count %}
                 {% if p == page %}
@@ -424,6 +432,8 @@
                 </span>
                 {% endif %}
               {% endfor %}
+              {% else %}
+               {% endif %}
             </div>
             <div class="btn__toggle hidden">
               <button type="button" class="on">on</button>

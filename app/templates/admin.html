@@ -458,15 +458,28 @@
           </tr>
 
           <tr>
-            <th>Order (Positions)</th>
+            <th>Order (Category)</th>
             <th>
               <input
                 type="text"
                 class="form-control form-disabled"
-                placeholder="Порядок должности"
-                value="{{ employee_info.PositionOrder }}"
+                placeholder="Порядок категории"
+                value="{{ employee_info.CategoryOrder }}"
                 readonly="readonly"
                 disabled
+            />
+            </th>
+          </tr>
+
+          <tr>
+            <th>Order (Positions)</th>
+            <th>
+              <input
+                type="text"
+                class="form-control form-edit"
+                placeholder="Порядок должности"
+                value="{{ employee_info.PositionOrder }}"
+                name="PositionOrder"
               />
             </th>
           </tr>
