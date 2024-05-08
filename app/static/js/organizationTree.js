@@ -10,15 +10,6 @@ async function getOrganization() {
 }
 getOrganization();
 
-// function renderOrganization(jsonData) {
-//   const menuContainer = document.querySelector(".menu__list");
-//   jsonData.forEach((item) => {
-//     const menuItems = createMenuItems(item.Name, item.Children);
-//     menuContainer.insertAdjacentHTML("beforeend", menuItems);
-//   });
-
-//   applySavedMenuState();
-// }
 function renderOrganization(jsonData) {
   const menuContainer = document.querySelector(".menu__list");
   jsonData.forEach((item) => {
@@ -65,22 +56,7 @@ document.querySelectorAll(".menu__item").forEach((item) => {
     applySavedMenuState(); // Перерисовываем меню при каждом клике
   });
 });
-// КОД-------------------------------
-// function createMenuItems(name, children) {
-//   let html = `<li class="myMainClass">
-//       <span class="menu__items"><a href="">${name}</a></span>
-//       <ul class="menu__item">`;
-//   children.forEach((value) => {
-//     const hasChildren =
-//       Array.isArray(value.Children) && value.Children.length > 0;
-//     html += createMenuItem(hasChildren, value);
-//   });
 
-//   html += `</ul>
-//   </li>`;
-
-//   return html;
-// }
 function createMenuItems(name, children, Inn) {
   let html = `<li class="myMainClass">
       <span class="menu__items"><a href="/?organization=${Inn}">${name}</a></span>
@@ -230,118 +206,3 @@ document.getElementById("toggleButton").addEventListener("click", function () {
 
   saveMenuState(); // Сохранить состояние после сворачивания всех элементов
 });
-
-// -------------Появление теста с организацией и департаментом------------------------------
-
-// // Убираем надпись через крестик при нажатии
-// document.querySelector(".newText").addEventListener("click", () => {
-//   document.querySelector(".newText").style.display = "none";
-//   localStorage.removeItem("myText");
-// });
-
-// // Убираем надпись при нажатии кнопки "Искать"
-// // document.querySelector('.btn ').addEventListener('click', () => {
-// //   localStorage.removeItem('myText');
-// // })
-
-// // Добавляем надпись при нажатии на ссылку без плюса
-// document.querySelectorAll(".menu__item > li > a").forEach((item) => {
-//   item.addEventListener("click", function (e) {
-//     let stroke = [];
-//     let current = item.parentNode;
-//     while (current.className != "myMainClass") {
-//       if (current.nodeName == "UL") {
-//         stroke.push(current.previousElementSibling.textContent);
-//       }
-//       current = current.parentNode;
-
-//       //Сохранение данных после перезагрузки страницы
-//       localStorage.setItem(
-//         "myText",
-//         "Поиск по: " + stroke.reverse().join(" -> ") + " -> " + item.textContent
-//       );
-//       localStorage.getItem("myText");
-//     }
-//     document.querySelector(".newText").innerText =
-//       "Поиск по: " + stroke.join(" -> ") + " -> " + item.textContent;
-//     document.querySelector(".newText").style.display = "flex";
-//   });
-// });
-
-// // Добавляем надпись при нажатии на ссылку с плюсом
-// document.querySelectorAll(".menu__item > li > span > a").forEach((item) => {
-//   item.addEventListener("click", function (e) {
-//     let stroke = [];
-//     let current = item.parentNode;
-//     while (current.className != "myMainClass") {
-//       if (current.nodeName == "UL") {
-//         stroke.push(current.previousElementSibling.textContent);
-//       }
-//       current = current.parentNode;
-
-//       //Сохранение данных после перезагрузки страницы
-//       localStorage.setItem(
-//         "myText",
-//         "Поиск по: " + stroke.reverse().join(" -> ") + " -> " + item.textContent
-//       );
-//       localStorage.getItem("myText");
-//     }
-//     document.querySelector(".newText").innerText =
-//       "Поиск по: " + stroke.join(" -> ") + " -> " + item.textContent;
-//     document.querySelector(".newText").style.display = "flex";
-//   });
-// });
-
-// // Добавляем надпись при нажатии на ссылку с плюсом в другой структуре
-// document.querySelectorAll(".menu__item > span > a").forEach((item) => {
-//   item.addEventListener("click", function (e) {
-//     let stroke = [];
-//     let current = item.parentNode;
-//     while (current.className != "myMainClass") {
-//       if (current.nodeName == "UL") {
-//         stroke.push(current.previousElementSibling.textContent);
-//       }
-//       current = current.parentNode;
-
-//       //Сохранение данных после перезагрузки страницы
-//       localStorage.setItem(
-//         "myText",
-//         "Поиск по: " + stroke.reverse().join(" -> ") + " -> " + item.textContent
-//       );
-//       localStorage.getItem("myText");
-//     }
-//     document.querySelector(".newText").innerText =
-//       "Поиск по: " + stroke.join(" -> ") + " -> " + item.textContent;
-//     document.querySelector(".newText").style.display = "flex";
-//   });
-// });
-
-// // Вывод данных после перезагрузки страницы
-// if (localStorage.getItem("myText") !== null) {
-//   document.querySelector(".newText").innerText = localStorage.getItem("myText");
-//   document.querySelector(".newText").style.display = "flex";
-// }
-
-// // Скрипт модального окна, появление надписи при нажатии на отдел внутри модального окна
-// document.querySelectorAll(".department").forEach((item) => {
-//   stroke = [];
-//   item.addEventListener("click", (e) => {
-//     document.querySelectorAll(".menu__item > li > a").forEach((subitem) => {
-//       if (subitem.textContent === item.textContent) {
-//         subitem.click();
-//       }
-//     });
-//     document
-//       .querySelectorAll(".menu__item > li > span > a")
-//       .forEach((subitem) => {
-//         if (subitem.textContent === item.textContent) {
-//           subitem.click();
-//         }
-//       });
-//     document.querySelectorAll(".menu__item > span > a").forEach((subitem) => {
-//       if (subitem.textContent === item.textContent) {
-//         subitem.click();
-//       }
-//     });
-//   });
-// });
