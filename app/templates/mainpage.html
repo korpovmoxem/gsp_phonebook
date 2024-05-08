@@ -16,6 +16,7 @@
     <script defer src="{{ url_for('static', path='/js/email.js') }}"></script>
     <script defer src="/get_organization_tree"></script>
   </head>
+
   <body>
     <!-- Эффект при наведении на ссылки -->
       <div class="follow-cursor"></div>
@@ -158,9 +159,23 @@
         </div>
           </form>
         </div>
+
         <!-- Таблица с пользователями телефонного справочника и бутсраповский класс с колонками-->
+        {% set table_organization_name = namespace(name=None) %}
         {% for department_employees in items %}
         <div class='department_name'>
+        {% if search_text %}
+          {% if table_organization_name.name != department_employees[0]['OrganizationName'] %}
+          {% set table_organization_name.name = department_employees[0]['OrganizationName'] %}
+            <div class='table_organization_name'>
+              <div class='table_organization_name_text'>
+            {{ table_organization_name.name }}
+              </div>
+            </div>
+          {% else %}
+          {% endif %}
+        {% else %}
+        {% endif %}
         <div class="col-sm-9 col-wrapper">
           <div class='items_table'>
             <table class='table table-bordered table-hover'>

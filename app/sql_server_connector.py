@@ -223,11 +223,8 @@ class DataBaseStorage(SearchEngine):
             row['OrgStructure'] = list()
             row['insert_date'] = row['insert_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['insert_date'], datetime) else row['insert_date']
             row['update_date'] = row['update_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['update_date'], datetime) else row['update_date']
-            category = list(filter(lambda x: x['ID'] == row['CategoryID'], self.categories))
-            if not category:
-                row['CategoryOrder'] = 100
-            else:
-                row['CategoryOrder'] = category[0]['Order']
+            category_info = list(filter(lambda x: x['ID'] == row['CategoryID'], self.categories))
+            row['CategoryOrder'] = category_info[0]['Order'] if category_info[0]['Order'] else 100
             organization_info = list(filter(lambda org: org['ID'] == row['OrganizationID'], self.organizations))[0]
             row['OrganizationName'] = organization_info['Name']
             position_info = list(filter(lambda x: x['ID'] == row['PositionID'], self.positions))

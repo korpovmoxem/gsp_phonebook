@@ -348,6 +348,17 @@ textarea {
   justify-content: center;
 }
 
+.table_organization_name {
+  background-color: #006db6;
+  margin-left: 30px
+}
+
+.table_organization_name_text {
+  color: #dbdfd1;
+  font-size: 18px;
+  margin-left: 10px;
+}
+
 .status_info {
   display: flex;
   justify-content: center;
