@@ -678,6 +678,20 @@ li:last-child {
   color: #000;
 }
 
+/* Плашка с наименованием организаций при выборе сотрудника */
+.table_organization_name {
+  width: 1261px;
+}
+
+.light,
+.table_organization_name_text {
+  color: #fff;
+}
+
+.dark .table_organization_name_text {
+  color: #dbdfd1;
+}
+
 /* Таблица с пользователями телефонного справочника */
 .row {
   align-items: flex-start;
@@ -1078,17 +1092,4 @@ th {
   .follow-cursor {
     display: none;
   }
-}
-
-.table_organization_name {
-  width: 1261px;
-}
-
-.light,
-.table_organization_name_text {
-  color: #fff;
-}
-
-.dark .table_organization_name_text {
-  color: #dbdfd1;
 }
