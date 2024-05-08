@@ -99,6 +99,8 @@ def admin_page(
         token: str | None = Cookie(default=None),
         employee_id: str | None = None,
         confirmation_text: bool = False,
+        department: str | None = None,
+        department_order: str | None = None,
 ):
     if not token:
         return RedirectResponse(f'/login?employee_id={employee_id}')
@@ -123,6 +125,8 @@ def admin_page(
         'user_name': user_info['name'],
         'confirmation_text': confirmation_text,
         'current_date': datetime.now().strftime('%Y-%m-%d'),
+        'department': department,
+        'department_order': department_order,
     })
 
 
@@ -188,12 +192,17 @@ async def change_data(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Недостаточно прав для изменения выбранных атрибутов",
             )
-    post_data['EditedBy'] = user_info['login']
-    post_data['EditedDate'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    copy_post_data = post_data
-    phonebook_data.update_edited_data(post_data)
-    response = RedirectResponse(f"/admin?employee_id={post_data['ID']}&confirmation_text=True")
-    RedisConnector().update_admin_logs(copy_post_data)
+
+    if 'department' and 'department_order' in post_data:
+        phonebook_data.update_department_order(post_data)
+        response = RedirectResponse(f"/admin?confirmation_text=True")
+    else:
+        post_data['EditedBy'] = user_info['login']
+        post_data['EditedDate'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        copy_post_data = post_data
+        phonebook_data.update_edited_data(post_data)
+        response = RedirectResponse(f"/admin?employee_id={post_data['ID']}&confirmation_text=True")
+        RedisConnector().update_admin_logs(copy_post_data)
     c = CookieUserName(token_data)
     response.set_cookie(key=c.key, value=c.value, max_age=c.max_age)
     return response

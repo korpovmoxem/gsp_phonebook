@@ -72,10 +72,10 @@ class SqlServerConnector:
         :return: Преобразованные данные для запроса в БД
         """
         if table_name == 'Positions':
-            query = f"SELECT [PositionID] FROM {self.__db_name}.Employees WHERE ID = '{data['ID']}'"
+            query = f"SELECT [PositionID] FROM {self.__db_name}.Employees WHERE ID='{data['ID']}'"
             entry = self.__execute_query(query)
             position_id = entry[0][0]
-            query = f"UPDATE {self.__db_name}.{table_name} SET [Order]={data['Order']} WHERE ID={position_id}"
+            query = f"UPDATE {self.__db_name}.{table_name} SET [Order]={data['Order']} WHERE ID='{position_id}'"
             self.__execute_query(query)
 
         elif table_name == 'EditedEmployees':
@@ -98,6 +98,10 @@ class SqlServerConnector:
 
             self.__execute_query(query)
             return data
+
+    def change_department_order(self, department: str, department_order: int):
+        query = f"UPDATE {self.__db_name}.Departments SET [Order]={department_order} WHERE [ID]='{department}'"
+        self.__execute_query(query)
 
 
 class DataBaseStorage(SearchEngine):
@@ -155,6 +159,28 @@ class DataBaseStorage(SearchEngine):
                 )
         return current_tree
 
+    def __create_organization_tree(self):
+        self.__organization_tree = list()
+        for organization in list(sorted(self.organizations, key=lambda org: org['Order'])):
+            child_tree = {
+                'ID': organization['ID'],
+                'Name': organization['Name'],
+                'Filial': -1,
+                'Inn': organization['ID'],
+                'Children': list(),
+            }
+            for department in list(filter(lambda dep: dep['Level'] == 1 and dep['OrganizationID'] == organization['ID'], self.departments)):
+                child_tree['Children'].append(
+                    {
+                        'ID': department['ID'],
+                        'Name': department['Name'],
+                        'Filial': department['Filial'],
+                        'Inn': department['OrganizationID'],
+                        'Children': self.__fill_department_children(department, self.departments),
+                    }
+                )
+            self.__organization_tree.append(child_tree)
+
     def __init__(self):
         super().__init__()
         connector = SqlServerConnector()
@@ -197,11 +223,8 @@ class DataBaseStorage(SearchEngine):
             row['OrgStructure'] = list()
             row['insert_date'] = row['insert_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['insert_date'], datetime) else row['insert_date']
             row['update_date'] = row['update_date'].strftime('%d.%m.%Y %H:%M:%S') if isinstance(row['update_date'], datetime) else row['update_date']
-            category = list(filter(lambda x: x['ID'] == row['CategoryID'], self.categories))
-            if not category:
-                row['CategoryOrder'] = 100
-            else:
-                row['CategoryOrder'] = category[0]['Order']
+            category_info = list(filter(lambda x: x['ID'] == row['CategoryID'], self.categories))
+            row['CategoryOrder'] = category_info[0]['Order'] if category_info[0]['Order'] else 100
             organization_info = list(filter(lambda org: org['ID'] == row['OrganizationID'], self.organizations))[0]
             row['OrganizationName'] = organization_info['Name']
             position_info = list(filter(lambda x: x['ID'] == row['PositionID'], self.positions))
@@ -241,26 +264,7 @@ class DataBaseStorage(SearchEngine):
                 row['OrgStructure'] += self.__fill_organizational_structure(row, self.employees, self.departments)
 
         # Формирование древовидной структуры департаментов
-        self.__organization_tree = list()
-        for organization in list(sorted(self.organizations, key=lambda org: org['Order'])):
-            child_tree = {
-                'ID': organization['ID'],
-                'Name': organization['Name'],
-                'Filial': -1,
-                'Inn': organization['ID'],
-                'Children': list(),
-            }
-            for department in list(filter(lambda dep: dep['Level'] == 1 and dep['OrganizationID'] == organization['ID'], self.departments)):
-                child_tree['Children'].append(
-                    {
-                         'ID': department['ID'],
-                        'Name': department['Name'],
-                        'Filial': department['Filial'],
-                        'Inn': department['OrganizationID'],
-                        'Children': self.__fill_department_children(department, self.departments),
-                    }
-                )
-            self.__organization_tree.append(child_tree)
+        self.__create_organization_tree()
 
     def get_dep_org_info(self, organization: int, department: str) -> dict:
         """
@@ -310,3 +314,11 @@ class DataBaseStorage(SearchEngine):
     @property
     def organization_tree(self) -> list:
         return self.__organization_tree
+
+    def update_department_order(self, data: dict):
+        connector = SqlServerConnector()
+        connector.change_department_order(data['department'], data['department_order'])
+        self.departments = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.departments ORDER BY [Order], [Name] ASC")
+        self.__create_organization_tree()
+
+

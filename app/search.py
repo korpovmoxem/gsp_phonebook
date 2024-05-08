@@ -59,11 +59,7 @@ class SearchEngine:
         :return: Отфильтрованный массив данных по поисковому тексту
         """
         result = list()
-        for key in collection[0].keys():
-            if key in ['org_tree_name', 'OrgStructure', 'HideEmail', 'HideTelephoneNumberCorp',
-                       'HideMobileNumberCorp', 'HideExtNumID', 'HideWorkPlace',
-                       'HidePhotoID', 'HideAddress', 'EditedBy', 'EditedDate']:
-                continue
+        for key in ['FullNameRus', 'PositionTitle', 'Email', 'TelephoneNumberCorp']:
             result += list(filter(lambda item: search_text.lower().replace('ё', 'е') in str(item[key]).lower().replace('ё', 'е') and item not in result, collection))
         return result
 
