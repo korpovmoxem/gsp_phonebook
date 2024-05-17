@@ -9,7 +9,7 @@ body {
   align-items: stretch;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 150px;
+  margin-top: 50px;
 }
 
 #submit_button {
@@ -28,19 +28,45 @@ body {
   color: white;
 }
 
+.collapse_buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  align-items: center;
+}
 
 .date_label {
   color: white;
 }
 
+.positions_files {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file_field_label {
+  margin-top: 30px;
+  margin-bot: 15px;
+  color: white;
+  text-align: center;
+  font-size: 18px
+}
+
+.file_blocks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
 
 .entry_logs {
   display: flex;
-  justify-content: flex-end;
-  align-content: flex-end;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
-  align-items: flex-end;
-  margin-right: 15px;
+  margin-top: 15px;
 }
 
 .top_content {

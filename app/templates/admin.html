@@ -41,20 +41,23 @@
       </button>
       <p class="admin_name">{{ user_name }}</p>
     </form>
-    <form class="entry_logs" action="/admin/logs">
-    <label class="date_label" for='begin_date'>От:</label>
-      <input type="date" value="{{ current_date }}" name='begin_date'/>
-      <label class="date_label" for='end_date'>До:</label>
-    <input type="date" value="{{ current_date }}" name='end_date'/>
-    <button type="submit" class="btn btn-primary" id="submit_button">
-          Статистика сайта
-    </button>
-    </form>
     </div>
     <div class="page_title">
       <p class="text-center">Панель администратора</p>
     </div>
 
+    <div class='collapse_buttons'>
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDepartments" aria-expanded="false" aria-controls="collapseDepartments" style="margin-right: 10px">
+      Порядок департаментов
+    </button>
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePositions" aria-expanded="false" aria-controls="collapsePositions" style="margin-left: 10px; margin-right: 10px">
+      Порядок должностей
+    </button>
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLogs" aria-expanded="false" aria-controls="collapseLogs" style="margin-left: 10px">
+      Статистика сайта
+    </button>
+    </div>
+    <div class="collapse" id="collapseDepartments">
     <form method="post" id="input_form" action='/change_data'>
       <div class="mb-3 department_fields">
         <input
@@ -63,6 +66,7 @@
           name="department"
           placeholder="ID департамента"
           value="{{ '' if department in ['None', None] else department }}"
+          style="margin-right: 10px"
       />
         <input
           type="text"
@@ -70,6 +74,7 @@
           name="department_order"
           placeholder="Order"
           value="{{ '' if department_order in ['None', None] else department_order }}"
+          style="margin-left: 10px"
       />
       </div>
       <div class="button_block">
@@ -79,6 +84,36 @@
         {{ confirmation_text }}
       </div>
     </form>
+    </div>
+
+    <div class='collapse' id='collapsePositions'>
+      <div class='file_blocks'>
+      <div class='file_field_label'>
+        Текущий файл
+        </div>
+        <form method="get" action="file.doc">
+          <button type="submit">Скачать</button>
+        </form>
+      <div class="mb-3">
+        <div class='file_field_label'>
+          Обновленный файл
+        </div>
+        <input class="form-control" type="file" id="formFile">
+      </div>
+      </div>
+    </div>
+
+    <div class="collapse" id="collapseLogs">
+    <form class="entry_logs" action="/admin/logs">
+      <label class="date_label" for='begin_date'>От:</label>
+        <input type="date" value="{{ current_date }}" name='begin_date'/>
+        <label class="date_label" for='end_date'>До:</label>
+      <input type="date" value="{{ current_date }}" name='end_date'/>
+      <button type="submit" class="btn btn-primary" id="submit_button">
+            Статистика сайта
+      </button>
+      </form>
+      </div>
 
     <form method="get" id="input_form">
       <div class="mb-3">
