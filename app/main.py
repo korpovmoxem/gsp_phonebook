@@ -26,7 +26,7 @@ print(datetime.now() - start_time)
 
 
 @app.get('/update_data')
-def load_phonebook_data():
+async def load_phonebook_data():
     global phonebook_data
     phonebook_data = DataBaseStorage()
     phonebook_data.create_position_file()
@@ -237,9 +237,7 @@ async def update_positions(
     filename = f'{os.path.dirname(os.path.realpath(__file__))}{os.sep}static{os.sep}xlsx{os.sep}new_positions.xlsx'
     with open(filename, 'wb+') as file:
         file.write(upload_file.file.read())
-    phonebook_data.update_positions_from_file()
-    os.remove(filename)
-    load_phonebook_data()
+    await phonebook_data.update_positions_from_file()
 
     c = CookieUserName(token_data)
     response = RedirectResponse(f"/admin?confirmation_text=True")

@@ -101,7 +101,7 @@ class SqlServerConnector:
             return data
 
     def update_positions(self, row_data: dict):
-        self.__execute_query(f"UPDATE {self.__db_name}.Positions SET [Order]={row_data['Order']} WHERE [ID] = '{row_data["ID"]}'")
+        self.__execute_query(f"UPDATE {self.__db_name}.Positions SET [Order]={row_data['Order']} WHERE [ID] = '{row_data['ID']}'")
 
     def change_department_order(self, department: str, department_order: int):
         query = f"UPDATE {self.__db_name}.Departments SET [Order]={department_order} WHERE [ID]='{department}'"
@@ -184,9 +184,6 @@ class DataBaseStorage(SearchEngine):
                     }
                 )
             self.__organization_tree.append(child_tree)
-
-    def create_positions_file(self):
-        pass
 
     def __init__(self):
         super().__init__()
@@ -332,21 +329,30 @@ class DataBaseStorage(SearchEngine):
             sheet.append(list(row.values()))
         workbook.save(filename)
 
-    def update_positions_from_file(self) -> None:
-        workbook = openpyxl.load_workbook(f'{os.path.dirname(os.path.realpath(__file__))}{os.sep}static{os.sep}xlsx{os.sep}new_positions.xlsx')
+    @staticmethod
+    def replace_category_none(data: dict):
+        data['Category'] = None if not data['Category'] else data['Category']
+        data['update_date'] = None if not data['update_date'] else data['update_date']
+        return data
+
+    async def update_positions_from_file(self) -> None:
+        filename = f'{os.path.dirname(os.path.realpath(__file__))}{os.sep}static{os.sep}xlsx{os.sep}new_positions.xlsx'
+        workbook = openpyxl.load_workbook(filename, read_only=True)
         sheet = workbook.active
-        row_title = None
+        row_title = list(map(lambda cell: cell.value, list(sheet)[0]))
+        changed_data = list(filter(lambda row: dict(zip(row_title, list(map(lambda cell: cell.value, row)))) not in list(map(lambda d: self.replace_category_none(d), self.positions)), list(sheet)[1:]))
         connector = SqlServerConnector()
-        for row in sheet:
-            row = list(map(lambda cell: cell.value, row))
-            if not row_title:
-                row_title = row
-            else:
-                data = dict(zip(row_title, row))
-                current_positions = list(filter(lambda x: x['ID'] == data['ID'], self.positions))
-                if data['Order'] != current_positions[0]['Order']:
-                    print(data)
-                    connector.update_positions(data)
+        for row in changed_data:
+            row = dict(zip(row_title, list(map(lambda cell: cell.value, row))))
+            connector.update_positions(row)
+            position = list(filter(lambda x: x['ID'] == row['ID'], self.positions))[0]
+            position_index = self.positions.index(position)
+            self.positions[position_index]['Order'] = row['Order']
+            employees = list(filter(lambda x: x['PositionID'] == row['ID'], self.employees))
+            for employee in employees:
+                employee_index = self.employees.index(employee)
+                self.employees[employee_index]['PositionOrder'] = row['Order']
+        workbook.close(filename)
 
 
 
