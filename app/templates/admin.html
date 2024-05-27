@@ -91,15 +91,20 @@
       <div class='file_field_label'>
         Текущий файл
         </div>
-        <form method="get" action="file.doc">
-          <button type="submit">Скачать</button>
-        </form>
+        <a href="{{ url_for('static', path='/xlsx/positions.xlsx') }}" download>
+           <button type="button" class="btn btn-primary">Скачать</button>
+        </a>
+       <form method='post' id='update_posiitons' action="/update_positions" enctype="multipart/form-data" class="upload_file_block">
       <div class="mb-3">
         <div class='file_field_label'>
           Обновленный файл
         </div>
-        <input class="form-control" type="file" id="formFile">
+        <input class="form-control" type="file" id="formFile" name='upload_file' accept=".xlsx">
       </div>
+      <button type="submit" class="btn btn-primary" id="submit_button">
+        Обновить данные
+        </button>
+       </form>
       </div>
     </div>
 

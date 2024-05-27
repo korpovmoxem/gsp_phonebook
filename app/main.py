@@ -1,9 +1,10 @@
+import os
 import json
 from typing import Annotated
 from datetime import datetime
 
 import uvicorn
-from fastapi import FastAPI, Request, HTTPException, status, Form, Cookie
+from fastapi import FastAPI, Request, HTTPException, status, Form, Cookie, UploadFile
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
@@ -20,6 +21,7 @@ templates = Jinja2Templates(directory='templates')
 
 start_time = datetime.now()
 phonebook_data = DataBaseStorage()
+phonebook_data.create_position_file()
 print(datetime.now() - start_time)
 
 
@@ -27,6 +29,7 @@ print(datetime.now() - start_time)
 def load_phonebook_data():
     global phonebook_data
     phonebook_data = DataBaseStorage()
+    phonebook_data.create_position_file()
     print('Данные справочника обновлены')
 
 
@@ -204,6 +207,42 @@ async def change_data(
         response = RedirectResponse(f"/admin?employee_id={post_data['ID']}&confirmation_text=True")
         RedisConnector().update_admin_logs(copy_post_data)
     c = CookieUserName(token_data)
+    response.set_cookie(key=c.key, value=c.value, max_age=c.max_age)
+    return response
+
+
+@app.post('/update_positions')
+async def update_positions(
+        request: Request,
+        upload_file: UploadFile,
+        token: str | None = Cookie(default=None),
+):
+
+    if not token:
+        return RedirectResponse('/login')
+
+    token_data = CookieUserName.verify_token(token)
+    user_info = ActiveDirectoryConnection().authorize_user(token_data)
+    if not user_info:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Токен cookie не верифицирован",
+        )
+
+    if user_info['group'] == 'moderator':
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Недостаточно прав для изменения таблицы Positions",
+        )
+    filename = f'{os.path.dirname(os.path.realpath(__file__))}{os.sep}static{os.sep}xlsx{os.sep}new_positions.xlsx'
+    with open(filename, 'wb+') as file:
+        file.write(upload_file.file.read())
+    phonebook_data.update_positions_from_file()
+    os.remove(filename)
+    load_phonebook_data()
+
+    c = CookieUserName(token_data)
+    response = RedirectResponse(f"/admin?confirmation_text=True")
     response.set_cookie(key=c.key, value=c.value, max_age=c.max_age)
     return response
 

@@ -5,6 +5,7 @@ import base64
 import pyodbc
 import yaml
 from yaml.loader import SafeLoader
+import openpyxl
 
 from search import SearchEngine
 
@@ -98,6 +99,9 @@ class SqlServerConnector:
 
             self.__execute_query(query)
             return data
+
+    def update_positions(self, row_data: dict):
+        self.__execute_query(f"UPDATE {self.__db_name}.Positions SET [Order]={row_data['Order']} WHERE [ID] = '{row_data["ID"]}'")
 
     def change_department_order(self, department: str, department_order: int):
         query = f"UPDATE {self.__db_name}.Departments SET [Order]={department_order} WHERE [ID]='{department}'"
@@ -195,13 +199,8 @@ class DataBaseStorage(SearchEngine):
         self.categories = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.Categories")
 
         self.employees = list(filter(lambda x: x['Fired'] != 1 and x['Decret'] != 1 and x['PositionID'] in map(lambda y: y['ID'], self.positions), self.employees))
-
-        try:
-            with open(f'{os.path.dirname(os.path.realpath(__file__))}/static/content/no_avatar.jpg', 'rb') as file:
-                no_avatar = file.read()
-        except FileNotFoundError:
-            with open(f'{os.path.dirname(os.path.realpath(__file__))}\\static\\content\\no_avatar.jpg', 'rb') as file:
-                no_avatar = file.read()
+        with open(f'{os.path.dirname(os.path.realpath(__file__))}{os.sep}static{os.sep}content{os.sep}no_avatar.jpg', 'rb') as file:
+            no_avatar = file.read()
 
         for row in self.employees:
 
@@ -323,5 +322,31 @@ class DataBaseStorage(SearchEngine):
         connector.change_department_order(data['department'], data['department_order'])
         self.departments = connector.get_formatted_data(f"SELECT * FROM {connector.db_name}.departments ORDER BY [Order], [Name] ASC")
         self.__create_organization_tree()
+
+    def create_position_file(self) -> None:
+        filename = f"{os.path.dirname(os.path.realpath(__file__))}{os.sep}static{os.sep}xlsx{os.sep}positions.xlsx"
+        workbook = openpyxl.Workbook()
+        sheet = workbook.active
+        sheet.append(['ID', 'Name', 'Category', 'insert_date', 'update_date', 'Order'])
+        for row in self.positions:
+            sheet.append(list(row.values()))
+        workbook.save(filename)
+
+    def update_positions_from_file(self) -> None:
+        workbook = openpyxl.load_workbook(f'{os.path.dirname(os.path.realpath(__file__))}{os.sep}static{os.sep}xlsx{os.sep}new_positions.xlsx')
+        sheet = workbook.active
+        row_title = None
+        connector = SqlServerConnector()
+        for row in sheet:
+            row = list(map(lambda cell: cell.value, row))
+            if not row_title:
+                row_title = row
+            else:
+                data = dict(zip(row_title, row))
+                current_positions = list(filter(lambda x: x['ID'] == data['ID'], self.positions))
+                if data['Order'] != current_positions[0]['Order']:
+                    print(data)
+                    connector.update_positions(data)
+
 
 
