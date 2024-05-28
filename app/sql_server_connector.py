@@ -309,6 +309,7 @@ class DataBaseStorage(SearchEngine):
                 value = value.strip("'") if value != 'NULL' else ''
             employee_data[key.replace('[', '').replace(']', '')] = value
         self.employees[employee_data_index] = employee_data
+        self.employees = sorted(self.employees, key=lambda x: (x['OrganizationOrder'], x['CategoryOrder'], x['PositionOrder'], x['Order'], x['FullNameRus']))
 
     @property
     def organization_tree(self) -> list:
@@ -335,7 +336,7 @@ class DataBaseStorage(SearchEngine):
         data['update_date'] = None if not data['update_date'] else data['update_date']
         return data
 
-    async def update_positions_from_file(self) -> None:
+    def update_positions_from_file(self) -> None:
         filename = f'{os.path.dirname(os.path.realpath(__file__))}{os.sep}static{os.sep}xlsx{os.sep}new_positions.xlsx'
         workbook = openpyxl.load_workbook(filename, read_only=True)
         sheet = workbook.active
@@ -352,7 +353,9 @@ class DataBaseStorage(SearchEngine):
             for employee in employees:
                 employee_index = self.employees.index(employee)
                 self.employees[employee_index]['PositionOrder'] = row['Order']
-        workbook.close(filename)
+        workbook.close()
+        self.employees = sorted(self.employees, key=lambda x: (x['OrganizationOrder'], x['CategoryOrder'], x['PositionOrder'], x['Order'], x['FullNameRus']))
+        print(self.employees[1])
 
 
 

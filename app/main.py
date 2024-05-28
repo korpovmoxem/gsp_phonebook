@@ -212,7 +212,7 @@ async def change_data(
 
 
 @app.post('/update_positions')
-async def update_positions(
+def update_positions(
         request: Request,
         upload_file: UploadFile,
         token: str | None = Cookie(default=None),
@@ -237,7 +237,7 @@ async def update_positions(
     filename = f'{os.path.dirname(os.path.realpath(__file__))}{os.sep}static{os.sep}xlsx{os.sep}new_positions.xlsx'
     with open(filename, 'wb+') as file:
         file.write(upload_file.file.read())
-    await phonebook_data.update_positions_from_file()
+    phonebook_data.update_positions_from_file()
 
     c = CookieUserName(token_data)
     response = RedirectResponse(f"/admin?confirmation_text=True")
