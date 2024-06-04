@@ -355,6 +355,7 @@ class DataBaseStorage(SearchEngine):
                 self.employees[employee_index]['PositionOrder'] = row['Order']
         workbook.close()
         self.employees = sorted(self.employees, key=lambda x: (x['OrganizationOrder'], x['CategoryOrder'], x['PositionOrder'], x['Order'], x['FullNameRus']))
+        self.create_position_file()
 
 
 
