@@ -4,7 +4,7 @@ from typing import Annotated
 from datetime import datetime
 
 import uvicorn
-from fastapi import FastAPI, Request, HTTPException, status, Form, Cookie, UploadFile
+from fastapi import FastAPI, Request, HTTPException, status, Form, Cookie, UploadFile, Header
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
@@ -36,12 +36,13 @@ async def load_phonebook_data():
 @app.get('/')
 def main_route(
         request: Request,
+        user_ip: str = Header(None, alias='X-Real-IP'),
         search_text: str = '',
         department: str = '',
         organization: int = 0,
         page: int = 1,
 ):
-    RedisConnector().update_ip_logs(request.client.host)
+    RedisConnector().update_ip_logs(user_ip)
     return templates.TemplateResponse('mainpage.html', {
         'request': request,
         'items': phonebook_data.search(search_text, department, organization, page=page),
@@ -253,4 +254,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8005)
+    uvicorn.run(app, host='0.0.0.0', port=8000)
