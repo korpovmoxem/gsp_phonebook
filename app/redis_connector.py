@@ -50,11 +50,10 @@ class RedisConnector:
         Запись в БД данных в формате множества по имени текущей даты и по значению ip-адреса.
         :param ip_address: IP-адрес пользователя
         """
-        if ip_address in ['127.0.0.1', '10.64.240.153']:
-            return
-        date = datetime.now().strftime('%d.%m.%Y')
-        with redis.Redis(host=self.__host, port=self.__port, db=1) as r:
-            r.sadd(date, ip_address)
+        if ip_address:
+            date = datetime.now().strftime('%d.%m.%Y')
+            with redis.Redis(host=self.__host, port=self.__port, db=1) as r:
+                r.sadd(date, ip_address)
 
     def read_ip_logs(self, begin_date: datetime, end_date: datetime):
         """

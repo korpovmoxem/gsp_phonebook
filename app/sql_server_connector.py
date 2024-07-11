@@ -142,6 +142,24 @@ class DataBaseStorage(SearchEngine):
 
         return org_structure
 
+    def __fill_department_structure(self, parent_department: str, department_list: list) -> list:
+        """
+        Формирование древа родительских департаментов в виде списка
+        :param parent_department: ID родительского департамента
+        :param department_list: Массив департаментов
+        """
+        department_structure = list()
+        while parent_department != '00000000-0000-0000-0000-000000000000':
+            parent_info = list(filter(lambda dep: dep['ID'] == parent_department, department_list))[0]
+            department_structure.append(
+                {
+                    'Name': parent_info['Name'],
+                    'ID': parent_info['ID'],
+                }
+            )
+            parent_department = parent_info['ParentID']
+        return department_structure
+
     def __fill_department_children(self, department: dict, departments_list: list) -> list:
         """
         Рекурсивное формирование структуры департаментов в виде dict
@@ -234,11 +252,18 @@ class DataBaseStorage(SearchEngine):
                 row['DepartmentName'] = department[0]['Name']
                 row['ManagerID'] = department[0]['ManagerID']
                 row['ParentID'] = department[0]['ParentID']
-
+                row['DepartmentStructure'] = [
+                    {
+                        'Name': row['DepartmentName'],
+                        'ID': row['DepartmentID'],
+                    }
+                ]
+                row['DepartmentStructure'] = row['DepartmentStructure'] + self.__fill_department_structure(row['ParentID'], self.departments)
             else:
                 row['DepartmentName'] = ''
                 row['ManagerID'] = ''
                 row['ParentID'] = ''
+                row['DepartmentStructure'] = list()
 
             # Сокрытие данных и замена редактированными
             employee_edited_data = list(filter(lambda x: x['ID'] == row['ID'], list(filter(lambda y: 'ID' in y, self.edited_data))))

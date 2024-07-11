@@ -380,6 +380,22 @@ textarea {
   min-width: 600px !important;
 }
 
+.department_structure_modal {
+    font-size: 12px;
+    text-align: right;
+}
+
+.department_structure_modal_current {
+    font-weight: bold;
+    font-size: 14px;
+    text-align: right;
+}
+
+.department_structure_modal_sep {
+    margin-right: 15px;
+}
+
+
 .light input,
 select,
 textarea {

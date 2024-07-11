@@ -8,7 +8,7 @@
     <link href="{{ url_for('static', path='/bootstrap.min.5.3.1.css') }}" rel="stylesheet" />
     <script defer src="{{ url_for('static', path='/js/jQuery.js') }}"></script>
     <link id="favicon" rel="icon" type="image/x-icon" href="{{ url_for('static', path='/content/favicon.ico') }}">
-    <link href="{{ url_for('static', path='/style_v.1.css') }}" rel=stylesheet>
+    <link href="{{ url_for('static', path='/style_v.2.css') }}" rel=stylesheet>
     <script defer src="{{ url_for('static', path='/js/organizationTree.js') }}"></script>
     <script defer src="{{ url_for('static', path='/js/banner.js') }}"></script>
     <script async src="{{ url_for('static', path='/js/darkMode.js') }}"></script>
@@ -246,8 +246,26 @@
                 </div>
                 </TD>
                 <TD class='table_job_title'>{{item.PositionTitle}}</TD>
-                <TD class='table_prefix'>{{ '' if item.HideTelephoneNumberCorp == True else item.TelephoneNumberCorp[:2] }}</TD>
-                <TD class='table_phone_code'>{{ '' if item.HideTelephoneNumberCorp == True else item.TelephoneNumberCorp[2:] }}</TD>
+                <TD class='table_prefix'>
+                  {% if item.HideTelephoneNumberCorp != True %}
+                          {% if item.TelephoneNumberCorp|length == 6 %}
+                            {{ item.TelephoneNumberCorp[:2] }}
+                          {% else %}
+                            {{ item.TelephoneNumberCorp }}
+                          {% endif %}
+                        {% else %}
+                        {% endif %}
+                </TD>
+                <TD class='table_phone_code'>
+                  {% if item.HideTelephoneNumberCorp != True %}
+                          {% if item.TelephoneNumberCorp|length == 6 %}
+                            {{ item.TelephoneNumberCorp[2:] }}
+                          {% else %}
+                            {{ item.TelephoneNumberCorp }}
+                          {% endif %}
+                        {% else %}
+                        {% endif %}
+                </TD>
               </TR>
             <!-- Модальное окно -->
             <div class="modal fade" id="modal_{{ item.ID }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -326,7 +344,14 @@
                     </div>
                     <div class='col'>
                       <div class='prefix_value' style="text-align: right; font-size: 13px;">
-                        {{'' if item.HideTelephoneNumberCorp == True else item.TelephoneNumberCorp[:2]}}
+                        {% if item.HideTelephoneNumberCorp != True %}
+                          {% if item.TelephoneNumberCorp|length == 6 %}
+                            {{ item.TelephoneNumberCorp[:2] }}
+                          {% else %}
+                            -
+                          {% endif %}
+                        {% else %}
+                        {% endif %}
                       </div>
                     </div>
                   </div>
@@ -339,7 +364,14 @@
                     </div>
                     <div class='col'>
                         <div class='phone_value' style="text-align: right; font-size: 13px;">
-                        {{'' if item.HideTelephoneNumberCorp == True else item.TelephoneNumberCorp[2:]}}
+                        {% if item.HideTelephoneNumberCorp != True %}
+                          {% if item.TelephoneNumberCorp|length == 6 %}
+                            {{ item.TelephoneNumberCorp[2:] }}
+                          {% else %}
+                            {{ item.TelephoneNumberCorp }}
+                          {% endif %}
+                        {% else %}
+                        {% endif %}
                       </div>
                     </div>
                   </div>
@@ -360,12 +392,20 @@
                   <div class='row row-cols-2'>
                     <div class='col'>
                         <div class='mobile' style="text-align: left; font-size: 13px;">
-                          Мобильный
+                          Мобильный(рабочий)
                       </div>
                     </div>
                     <div class='col'>
                         <div class='mobile_value' style="text-align: right; font-size: 13px;">
                         {{'' if item.HideMobileNumberCorp == True else item.MobileNumberCorp}}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class='row row-cols-2'>
+                    <div class='col'>
+                      <div class='mobile' style="text-align: left; font-size: 13px;">
+                            Мобильный(личный)
                       </div>
                     </div>
                   </div>
@@ -410,10 +450,10 @@
                   </div>
                     </div>
                   </div>
-                  
 
-                  <div class='row'>
-                    <div class='structure' style='text-align: left; margin-top: 20px; font-weight: bold; border-bottom-color: rgba(119, 123, 125, 0.5); border-bottom: solid 1px; padding-bottom: 5px; margin-bottom: 10px'>
+                    <div class="row">
+                      <div class="col">
+                        <div class='structure' style='text-align: center; margin-top: 20px; font-weight: bold; border-bottom-color: rgba(119, 123, 125, 0.5); border-bottom: solid 1px; padding-bottom: 5px; margin-bottom: 10px'>
                       Оргструктура сотрудника
                     </div>
                     {% for boss in item.OrgStructure %}
@@ -425,11 +465,35 @@
                       <div class='col'>
                     </div>
                     {% endfor %}
+                      </div>
+
+                      <div class="col">
+                        <div class='row'>
+                    <div class='structure' style='text-align: center; margin-top: 20px; font-weight: bold; border-bottom-color: rgba(119, 123, 125, 0.5); border-bottom: solid 1px; padding-bottom: 5px; margin-bottom: 10px;'>
+                      Оргструктура отдела
+                    </div>
+                    {% for department in item.DepartmentStructure[::-1] %}
+                          {% if department.Name == item.DepartmentName %}
+                          <div class="department_structure_modal_current">
+                            <a class="department" href='?department={{ department.ID }}&organization={{ item.OrganizationID }}'>{{ department.Name }}</a>
+                          </div>
+                          {% else %}
+                          <div class="department_structure_modal">
+                            <a class="department" href='?department={{ department.ID }}&organization={{ item.OrganizationID }}'>{{ department.Name }}</a>
+                            <br>
+                            <div class="department_structure_modal_sep">
+                              &#8593;
+                            </div>
+                          </div>
+                          {% endif %}
+                    {% endfor %}
                     <div class="system_info">
                       <a href="/admin?employee_id={{ item.ID }}" target="_blank">{{ item.ID }}</a>
                     </div>
                   </div>
-                  
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>
