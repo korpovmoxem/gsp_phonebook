@@ -109,7 +109,8 @@ class SearchEngine:
                 self.child_departments_data += self.__get_child_department_employees(child['ID'], organization, (department_info['Name'], ))
 
         if self.filtered_data:
-            self.filtered_data[0]['org_tree_name'] = self.filtered_data[0]['DepartmentName']
+            try:
+                self.filtered_data[0]['org_tree_name'] = self.filtered_data[0]['DepartmentName']
 
         if not self.filtered_data and self.child_departments_data:
             for i in range(len(self.child_departments_data)):
